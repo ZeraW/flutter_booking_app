@@ -24,9 +24,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void bangBang() {
     Future.delayed(Duration(milliseconds: 500), () {
       if (mounted) {
-        setState(() {
+        /*setState(() {
           x = 1;
-        });
+        });*/
       }
     }).then((value) {
       Future.delayed(Duration(milliseconds: 2000), () {
@@ -54,7 +54,15 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
         ),
         child: Center(
-          child: AnimatedOpacity(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(Dimensions.getWidth(25.0)),
+            child: Image.asset(
+              "assets/images/otoraty.jpeg",
+              fit: BoxFit.cover,
+              height: Dimensions.getWidth(50.0),
+              width: Dimensions.getWidth(50.0),
+            ),
+          )/*AnimatedOpacity(
             opacity: x,
             duration: Duration(milliseconds: 1000),
             child: ClipRRect(
@@ -66,9 +74,11 @@ class _SplashScreenState extends State<SplashScreen> {
                 width: Dimensions.getWidth(50.0),
               ),
             ),
-          ),
+          )*/,
         ),
       ),
     );
   }
 }
+
+

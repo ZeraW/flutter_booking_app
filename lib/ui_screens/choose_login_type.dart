@@ -45,10 +45,13 @@ class ChooseLoginType extends StatelessWidget {
                         ))),
                 Spacer(),
                 Container(
+                  //rounded corner + color
                   decoration: BoxDecoration(
                       color: MyColors().btnColor.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(Dimensions.getWidth(7))),
+                  //margin
                   margin: EdgeInsets.symmetric(horizontal: Dimensions.getWidth(4)),
+                  //height
                   height: Dimensions.getHeight(40),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -65,6 +68,7 @@ class ChooseLoginType extends StatelessWidget {
                         indent: 40,
                         endIndent: 40,
                       ),
+                      // on touch
                       GestureDetector(
                         onTap: () {
                           Navigator.push(context,

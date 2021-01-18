@@ -13,18 +13,18 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController _emailController = new TextEditingController();
+  TextEditingController _phoneController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
 
-  String _emailError = "";
+  String _phoneError = "";
   String _apiError = "";
   String _passwordError = "";
+
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-
         body: SingleChildScrollView(
           child: Container(
             height: Dimensions.getHeight(100),
@@ -61,17 +61,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: Dimensions.getHeight(7.0),
                 ),
                 TextFormBuilder(
-                  controller: _emailController,
+                  controller: _phoneController,
                   hint: "Phone Number :",
                   keyType: TextInputType.phone,
                 ),
-                if (_emailError != "") ...[
+                if (_phoneError != "") ...[
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
                     padding: EdgeInsets.only(top: 5),
                     alignment: Alignment.center,
                     child: Text(
-                      '$_emailError',
+                      '$_phoneError',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14 / MediaQuery.of(context).textScaleFactor,
@@ -156,8 +156,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _login(BuildContext context) async {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (_) => HomeScreen()));
+    /*Navigator.push(context,
+        MaterialPageRoute(builder: (_) => HomeScreen()));*/
   }
 }
 
@@ -176,7 +176,7 @@ class TextFormBuilder extends StatelessWidget {
         controller: controller,
         validator: (value) {
           if (value.isEmpty) {
-            return "الرجاء إدخال نص";
+            return "Please Enter a valid text";
           }
           return null;
         },

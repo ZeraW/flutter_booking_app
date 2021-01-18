@@ -20,13 +20,6 @@ class EnStrings {
   String appName = "BookingApp";
 }
 
-class ArStrings {
-  String appName;
-  String whatever;
-  static String scrollableText;
-
-}
-
 class MyTheme {
   ThemeData buildLightTheme() {
     final ThemeData base = ThemeData.light();
