@@ -1,10 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_booking_app/ui_screens/choose_login_type.dart';
-import 'package:flutter_booking_app/ui_screens/login.dart';
+import 'package:flutter_booking_app/models/db_model.dart';
+import 'package:flutter_booking_app/server/auth.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
 import 'package:flutter_booking_app/utils/utils.dart';
+import 'package:provider/provider.dart';
 
-import 'home.dart';
+import '../wrapper.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -31,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
     }).then((value) {
       Future.delayed(Duration(milliseconds: 2000), () {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => ChooseLoginType()));
+            context, MaterialPageRoute(builder: (_) => StreamProvider<User>.value(value: AuthService().user, child: Wrapper())));
       });
     });
   }

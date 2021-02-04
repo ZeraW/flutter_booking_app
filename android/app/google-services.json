@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "397476041130",
+    "project_id": "train-booking-app",
+    "storage_bucket": "train-booking-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397476041130:android:3291def3c797706f8c1bd3",
+        "android_client_info": {
+          "package_name": "com.example.flutter_booking_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "397476041130-t5ac3dqs2gc33c2r280rcthv19m0ag8s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCICHibB2m3M7wqBySEDBWieWoK3sc43Kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "397476041130-t5ac3dqs2gc33c2r280rcthv19m0ag8s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_booking_app/models/ticket.dart';
-import 'package:flutter_booking_app/ui_widget/profile_textfield.dart';
+import 'package:flutter_booking_app/ui_widget/textfield_widget.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
 import 'package:flutter_booking_app/utils/sharedpref.dart';
 import 'package:flutter_booking_app/utils/utils.dart';
@@ -36,7 +36,7 @@ class _AddNewTicketState extends State<AddNewTicket> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                TextFieldBuilder(
+                /*TextFormBuilder(
                     title: 'Passanger Name',
                     fillText: name,
                     onChange: (value) {
@@ -45,7 +45,7 @@ class _AddNewTicketState extends State<AddNewTicket> {
                 SizedBox(
                   height: Dimensions.getHeight(2.0),
                 ),
-                TextFieldBuilder(
+                TextFormBuilder(
                     title: 'Source Station',
                     fillText: from,
                     onChange: (value) {
@@ -54,7 +54,7 @@ class _AddNewTicketState extends State<AddNewTicket> {
                 SizedBox(
                   height: Dimensions.getHeight(2.0),
                 ),
-                TextFieldBuilder(
+                TextFormBuilder(
                     title: 'Destination Station',
                     fillText: to,
                     onChange: (value) {
@@ -83,7 +83,7 @@ class _AddNewTicketState extends State<AddNewTicket> {
                       ),
                     ),
                   ),
-                )
+                )*/
               ],
             ),
           ),

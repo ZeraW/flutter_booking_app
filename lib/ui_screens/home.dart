@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_booking_app/models/ticket.dart';
-import 'package:flutter_booking_app/ui_screens/add_new_ticket.dart';
+import 'package:flutter_booking_app/models/db_model.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
-import 'package:flutter_booking_app/utils/sharedpref.dart';
 import 'package:flutter_booking_app/utils/utils.dart';
+import 'package:provider/provider.dart';
 
+import 'home_widgets/admin_screen.dart';
 import 'home_widgets/profile_screen.dart';
 import 'home_widgets/search_screen.dart';
 import 'home_widgets/tickets_screen.dart';
@@ -25,9 +26,34 @@ class _HomeScreenState extends State<HomeScreen> {
     {'My Tickets': MyTicketScreen()},
   ];
 
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    DocumentSnapshot snapshot = Provider.of<DocumentSnapshot>(context);
+
+    UserModel user = snapshot != null ? new UserModel.fromJson(snapshot.data()) : null;
+
+    final List<BottomNavigationBarItem> _bottomNavigation = [
+      BottomNavigationBarItem(
+          icon: Icon(Icons.search), label: _children[0].keys.first),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.calendar_today),
+          label: _children[1].keys.first),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.person_pin), label: _children[2].keys.first),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.notifications_none),
+          label: _children[3].keys.first),
+    ];
+
+    if(user!=null && user.type=='admin'){
+      _children.add({'Admin Panel': AdminScreen()});
+      _bottomNavigation.add(BottomNavigationBarItem(
+          icon: Icon(Icons.whatshot), label: _children[4].keys.first));
+    }
+
+    return snapshot!=null ?Scaffold(
         appBar: new AppBar(
             centerTitle: true,
             elevation: 0.0,
@@ -36,10 +62,12 @@ class _HomeScreenState extends State<HomeScreen> {
             title: Text(
               _pageName,
               style: TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold,fontSize: Dimensions.getWidth(5)),
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: Dimensions.getWidth(5)),
             )),
         body: Container(
-          width: Dimensions.getHeight(100),
+            width: Dimensions.getHeight(100),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -52,32 +80,22 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             child: _children[_currentIndex].values.first),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            new BottomNavigationBarItem(
-                icon: Icon(Icons.search), label: _children[0].keys.first),
-            new BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today),
-                label: _children[1].keys.first),
-            new BottomNavigationBarItem(
-                icon: Icon(Icons.person_pin), label: _children[2].keys.first),
-            new BottomNavigationBarItem(
-                icon: Icon(Icons.notifications_none),
-                label: _children[3].keys.first),
-          ],
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-              _pageName = _children[index].keys.first;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          unselectedItemColor: Colors.grey,
-          currentIndex: _currentIndex,
-          elevation: 0.0,
-          selectedItemColor: MyColors().white,
-          backgroundColor: MyColors().accentColor,
-        ));
+        bottomNavigationBar:  BottomNavigationBar(
+            items: _bottomNavigation,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+                _pageName = _children[index].keys.first;
+              });
+            },
+            type: BottomNavigationBarType.fixed,
+            unselectedItemColor: Colors.grey,
+            currentIndex: _currentIndex,
+            elevation: 0.0,
+            selectedItemColor: MyColors().white,
+            backgroundColor: MyColors().accentColor,
+          ),
+        ):SizedBox();
   }
 }
 

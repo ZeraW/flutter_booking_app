@@ -1,13 +1,18 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_booking_app/server/auth.dart';
+import 'package:flutter_booking_app/server/auth_manage.dart';
 import 'package:flutter_booking_app/ui_screens/register.dart';
+import 'package:flutter_booking_app/ui_widget/textfield_widget.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
 import 'package:flutter_booking_app/utils/utils.dart';
-
-import 'home.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
+  String type;
+
+  LoginScreen({this.type});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -17,9 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passwordController = new TextEditingController();
 
   String _phoneError = "";
-  String _apiError = "";
   String _passwordError = "";
-
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +31,17 @@ class _LoginScreenState extends State<LoginScreen> {
         body: SingleChildScrollView(
           child: Container(
             height: Dimensions.getHeight(100),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [
-                      MyColors().pinkColor,
-                      MyColors().accentColor,
-                    ],
-                    stops: [0.1, 1],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  MyColors().pinkColor,
+                  MyColors().accentColor,
+                ],
+                stops: [0.1, 1],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
+            ),
             padding: EdgeInsets.symmetric(horizontal: Dimensions.getWidth(4.0)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -48,7 +51,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Center(
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(Dimensions.getWidth(20.0)),
+                    borderRadius:
+                        BorderRadius.circular(Dimensions.getWidth(20.0)),
                     child: Image.asset(
                       "assets/images/otoraty.jpeg",
                       fit: BoxFit.cover,
@@ -64,22 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _phoneController,
                   hint: "Phone Number :",
                   keyType: TextInputType.phone,
+                  errorText: _phoneError,
                 ),
-                if (_phoneError != "") ...[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    padding: EdgeInsets.only(top: 5),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '$_phoneError',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14 / MediaQuery.of(context).textScaleFactor,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
-                ],
                 SizedBox(
                   height: Dimensions.getHeight(3.0),
                 ),
@@ -88,22 +78,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   hint: "Password :",
                   keyType: TextInputType.visiblePassword,
                   isPassword: true,
+                  errorText: _passwordError,
                 ),
-                if (_passwordError != "") ...[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    padding: EdgeInsets.only(top: 5),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '$_passwordError',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14 / MediaQuery.of(context).textScaleFactor,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
-                ],
                 SizedBox(
                   height: Dimensions.getHeight(4.0),
                 ),
@@ -122,17 +98,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.w600),
                     ),
                   ),
-                ),
-                //Spacer(),
+                ), //Spacer(),
                 SizedBox(
                   height: Dimensions.getHeight(4.0),
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => RegisterScreen()));
+                    Provider.of<AuthManage>(context, listen: false)
+                        .toggleWidgets(currentPage: 2, type: widget.type);
                   },
                   child: Center(
                     child: Text(
@@ -156,63 +129,33 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _login(BuildContext context) async {
-    /*Navigator.push(context,
-        MaterialPageRoute(builder: (_) => HomeScreen()));*/
+    String phone =
+        _phoneController.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+    String password = _passwordController.text;
+    if (phone != null &&
+        phone.isNotEmpty &&
+        password != null &&
+        password.isNotEmpty) {
+      setState(() {
+        _passwordError ='';
+        _phoneError ='';
+      });
+      await AuthService().signInWithEmailAndPassword(
+          context: context,
+          email: '${_phoneController.text}@${widget.type}.com',
+          password: _passwordController.text);
+    } else {
+      setState(() {
+        if(phone == null || phone.isEmpty){
+          _phoneError = "Enter a valid phone number.";
+          _passwordError ='';
+        }else {
+          _passwordError = "Enter a valid password.";
+          _phoneError ='';
+        }
+      });
+    }
   }
 }
 
-class TextFormBuilder extends StatelessWidget {
-  final String hint;
-  final TextInputType keyType;
-  final bool isPassword;
-  final TextEditingController controller;
-
-  TextFormBuilder({this.hint, this.keyType, this.isPassword, this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-        // maxLength: maxLength,
-        controller: controller,
-        validator: (value) {
-          if (value.isEmpty) {
-            return "Please Enter a valid text";
-          }
-          return null;
-        },
-        enabled: true,
-        //controller: _controller,
-        maxLines: 1,
-
-        //onChanged: onChange,
-        keyboardType: keyType != null ? keyType : TextInputType.text,
-        obscureText: isPassword != null ? isPassword : false,
-        decoration: InputDecoration(
-          hintText: "$hint",
-          hintStyle:
-              TextStyle(color: Colors.white, fontSize: Dimensions.getWidth(4.5)),
-          contentPadding: new EdgeInsets.symmetric(
-              vertical: Dimensions.getHeight(1.0),
-              horizontal: Dimensions.getWidth(4.0)),
-          focusedErrorBorder: new OutlineInputBorder(
-            borderSide: BorderSide(width: 1, color: Colors.white),
-          ),
-          errorStyle: TextStyle(
-              color: Theme.of(context).accentColor,
-              fontWeight: FontWeight.w500),
-          focusedBorder: new OutlineInputBorder(
-            borderSide: BorderSide(width: 1, color: Colors.white),
-          ),
-          errorBorder: new OutlineInputBorder(
-            borderSide:
-                BorderSide(width: 1, color: Theme.of(context).accentColor),
-          ),
-          enabledBorder: new OutlineInputBorder(
-            borderSide: BorderSide(
-                width: 1, color: Colors.black54, style: BorderStyle.solid),
-          ),
-          fillColor: Colors.white,
-        ));
-  }
-}
 

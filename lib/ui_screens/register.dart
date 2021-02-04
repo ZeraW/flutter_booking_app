@@ -1,12 +1,22 @@
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_booking_app/models/db_model.dart';
+import 'package:flutter_booking_app/server/auth.dart';
+import 'package:flutter_booking_app/server/auth_manage.dart';
+import 'package:flutter_booking_app/ui_widget/textfield_widget.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
 import 'package:flutter_booking_app/utils/utils.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:toast/toast.dart';
 
 import 'login.dart';
 
 class RegisterScreen extends StatefulWidget {
+  String type;
+
+  RegisterScreen({this.type});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -17,33 +27,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController _passwordController = new TextEditingController();
   TextEditingController _repasswordController = new TextEditingController();
   TextEditingController _phoneController = new TextEditingController();
-  int _selectedCity;
 
   String _phoneError = "";
-  String _countryError = "";
   String _nameError = "";
   String _lastNameError = "";
-  String _apiError = "";
   String _passError = "";
   String _rePassError = "";
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _initData();
-  }
-
-  _initData() async {}
+  File _storedImage;
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _takePicture() async {
+      final imageFile = await ImagePicker()
+          .getImage(source: ImageSource.gallery, imageQuality: 80);
+
+      if (imageFile == null) {
+        return;
+      }
+      setState(() {
+        _storedImage = File(imageFile.path);
+        print('_storedImage');
+
+        print(_storedImage);
+      });
+    }
+
     return Scaffold(
       appBar: new AppBar(
           centerTitle: true,
           elevation: 0.0,
           leading: GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () => Provider.of<AuthManage>(context, listen: false)
+                .toggleWidgets(currentPage: 1, type: widget.type),
             child: Icon(
               Icons.chevron_left,
               color: MyColors().mainColor,
@@ -75,31 +91,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-
-            ///TODO fix bug key Appear
             children: [
               Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(Dimensions.getWidth(13)),
-                  child: Container(
-                    height: Dimensions.getWidth(26),
-                    width: Dimensions.getWidth(26),
-                    color: Colors.grey,
-                    child: CachedNetworkImage(
-                      imageUrl: "imageUrl",
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          Icon(
-                            Icons.person,
-                            size: 70,
-                            color: Colors.white,
-                          )/*CircularProgressIndicator()*/,
-                      errorWidget: (context, url, error) => Icon(
-                        Icons.person,
-                        size: 70,
-                        color: Colors.white,
-                      ),
-                    ), // replace
+                child: GestureDetector(
+                  onTap: _takePicture,
+                  child: ClipRRect(
+                    borderRadius:
+                        BorderRadius.circular(Dimensions.getWidth(13)),
+                    child: Container(
+                      height: Dimensions.getWidth(26),
+                      width: Dimensions.getWidth(26),
+                      color: Colors.grey,
+                      child: _storedImage != null
+                          ? Image.file(_storedImage)
+                          : Icon(
+                              Icons.person,
+                              size: 70,
+                              color: Colors.white,
+                            ), // replace
+                    ),
                   ),
                 ),
               ),
@@ -109,18 +119,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextFormBuilder(
                 hint: "First Name",
                 controller: _nameController,
+                errorText: _nameError,
               ),
-              getErrorWidget(context,
-                  isValid: _nameError != "", errorText: _nameError),
               SizedBox(
                 height: Dimensions.getHeight(3.0),
               ),
               TextFormBuilder(
                 hint: "Last Name",
                 controller: _lastNameController,
+                errorText: _lastNameError,
               ),
-              getErrorWidget(context,
-                  isValid: _lastNameError != "", errorText: _lastNameError),
               SizedBox(
                 height: Dimensions.getHeight(3.0),
               ),
@@ -128,9 +136,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 hint: "Phone Number",
                 keyType: TextInputType.number,
                 controller: _phoneController,
+                errorText: _phoneError,
               ),
-              getErrorWidget(context,
-                  isValid: _phoneError != "", errorText: _phoneError),
               SizedBox(
                 height: Dimensions.getHeight(3.0),
               ),
@@ -138,9 +145,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 hint: "Password",
                 isPassword: true,
                 controller: _passwordController,
+                errorText: _passError,
               ),
-              getErrorWidget(context,
-                  isValid: _passError != "", errorText: _passError),
               SizedBox(
                 height: Dimensions.getHeight(3.0),
               ),
@@ -148,11 +154,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 hint: "Confirm Password",
                 isPassword: true,
                 controller: _repasswordController,
+                errorText: _rePassError,
               ),
-              getErrorWidget(context,
-                  isValid: _rePassError != "", errorText: _rePassError),
-              getErrorWidget(context,
-                  isValid: _apiError != "", errorText: _apiError),
               SizedBox(
                 height: Dimensions.getHeight(3.0),
               ),
@@ -172,9 +175,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              SizedBox(
-                height: Dimensions.getHeight(3.0),
-              )
             ],
           ),
         ),
@@ -182,25 +182,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  _reg(BuildContext context) async {}
-}
+  _reg(BuildContext context) async {
+    String firstName = _nameController.text;
+    String lastName = _lastNameController.text;
+    String phone =
+        _phoneController.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+    String password = _passwordController.text;
+    String passwordConfirm = _repasswordController.text;
 
-Widget getErrorWidget(BuildContext context,
-    {@required bool isValid, @required String errorText}) {
-  return Visibility(
-    visible: isValid,
-    child: Container(
-      width: MediaQuery.of(context).size.width * 0.9,
-      padding: EdgeInsets.only(top: 5),
-      alignment: Alignment.center,
-      child: Text(
-        '$errorText',
-        textScaleFactor: 1.0,
-        style: TextStyle(
-          color: Colors.red,
-        ),
-      ),
-    ),
-  );
-}
+    if (firstName == null || firstName.isEmpty) {
+      _nameError = "Please enter first name";
+    } else if (lastName == null || lastName.isEmpty) {
+      clear();
+      _lastNameError = "Please enter last name";
+    } else if (phone == null || phone.isEmpty) {
+      clear();
+      _phoneError = "Please enter a valid phone number";
+    } else if (password == null || password.isEmpty) {
+      clear();
+      _passError = "Please enter password";
+    } else if (passwordConfirm == null || passwordConfirm.isEmpty) {
+      clear();
+      _rePassError = "Please enter Password confirm";
+    } else if (password != passwordConfirm) {
+      clear();
+      _passError = "Passwords don't matach";
+      _rePassError = "Passwords don't matach";
+    }else if(_storedImage==null){
+      Toast.show("Please Add Image", context,
+          backgroundColor: Colors.redAccent,
+          duration: Toast.LENGTH_LONG,
+          gravity: Toast.BOTTOM);
+    } else {
+      clear();
+      UserModel newUser = UserModel(
+          firstName: firstName,
+          lastName: lastName,
+          password: password,
+          phone: phone,
+          type: widget.type);
+      await AuthService().registerWithEmailAndPassword(
+          context: context, newUser: newUser, userImage: _storedImage);
+    }
+  }
 
+  void clear() {
+    setState(() {
+      _phoneError = "";
+      _nameError = "";
+      _lastNameError = "";
+      _passError = "";
+      _rePassError = "";
+    });
+  }
+}

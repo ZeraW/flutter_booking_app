@@ -31,7 +31,11 @@ dependencies:
   provider: ^4.0.5+1
   shared_preferences: ^0.5.3+4
   cached_network_image: ^2.3.3
-
+  firebase_auth: ^0.20.0+1
+  firebase_storage: ^7.0.0
+  cloud_firestore: ^0.16.0
+  toast: ^0.1.5
+  image_picker: ^0.6.7+21
 dev_dependencies:
   flutter_test:
     sdk: flutter
