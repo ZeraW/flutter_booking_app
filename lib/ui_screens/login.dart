@@ -28,100 +28,94 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-            height: Dimensions.getHeight(100),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  MyColors().pinkColor,
-                  MyColors().accentColor,
-                ],
-                stops: [0.1, 1],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: Dimensions.getWidth(4.0)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(
-                  height: Dimensions.getHeight(10),
-                ),
-                Center(
-                  child: ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(Dimensions.getWidth(20.0)),
-                    child: Image.asset(
-                      "assets/images/otoraty.jpeg",
-                      fit: BoxFit.cover,
-                      height: Dimensions.getWidth(40.0),
-                      width: Dimensions.getWidth(40.0),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: Dimensions.getHeight(7.0),
-                ),
-                TextFormBuilder(
-                  controller: _phoneController,
-                  hint: "Phone Number :",
-                  keyType: TextInputType.phone,
-                  errorText: _phoneError,
-                ),
-                SizedBox(
-                  height: Dimensions.getHeight(3.0),
-                ),
-                TextFormBuilder(
-                  controller: _passwordController,
-                  hint: "Password :",
-                  keyType: TextInputType.visiblePassword,
-                  isPassword: true,
-                  errorText: _passwordError,
-                ),
-                SizedBox(
-                  height: Dimensions.getHeight(4.0),
-                ),
-                SizedBox(
-                  height: Dimensions.getHeight(7.0),
-                  child: RaisedButton(
-                    onPressed: () {
-                      _login(context);
-                    },
-                    color: Color(0xff373951),
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: Dimensions.getWidth(4.0),
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ), //Spacer(),
-                SizedBox(
-                  height: Dimensions.getHeight(4.0),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Provider.of<AuthManage>(context, listen: false)
-                        .toggleWidgets(currentPage: 2, type: widget.type);
-                  },
-                  child: Center(
-                    child: Text(
-                      "Create new account",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontSize: Dimensions.getWidth(4.0)),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: Dimensions.getHeight(4.0),
-                )
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                MyColors().pinkColor,
+                MyColors().accentColor,
               ],
+              stops: [0.1, 1],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: Dimensions.isPortrait() ? Dimensions.getWidth(6.0) : Dimensions.getWidth(100.0)),
+          child: ListView(
+            children: [
+              SizedBox(
+                height: Dimensions.getHeight(6),
+              ),
+              Center(
+                child: ClipRRect(
+                  borderRadius:
+                      BorderRadius.circular(Dimensions.getWidth(20.0)),
+                  child: Image.asset(
+                    "assets/images/otoraty.jpeg",
+                    fit: BoxFit.cover,
+                    height: Dimensions.getWidth(40.0),
+                    width: Dimensions.getWidth(40.0),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: Dimensions.getHeight(12.0),
+              ),
+              TextFormBuilder(
+                controller: _phoneController,
+                hint: "Phone Number :",
+                keyType: TextInputType.phone,
+                errorText: _phoneError,
+              ),
+              SizedBox(
+                height: Dimensions.getHeight(3.0),
+              ),
+              TextFormBuilder(
+                controller: _passwordController,
+                hint: "Password :",
+                keyType: TextInputType.visiblePassword,
+                isPassword: true,
+                errorText: _passwordError,
+              ),
+              SizedBox(
+                height: Dimensions.getHeight(4.0),
+              ),
+              SizedBox(
+                height: Dimensions.getHeight(7.0),
+                child: ElevatedButton(
+                  style: ButtonStyle(backgroundColor:MaterialStateColor.resolveWith((states) => Color(0xff373951))),
+                  onPressed: () {
+                    _login(context);
+                  },
+                  child: Text(
+                    "Login",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Dimensions.getWidth(4.0),
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ), //Spacer(),
+              SizedBox(
+                height: Dimensions.getHeight(4.0),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Provider.of<AuthManage>(context, listen: false)
+                      .toggleWidgets(currentPage: 2, type: widget.type);
+                },
+                child: Center(
+                  child: Text(
+                    "Create new account",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: Dimensions.getWidth(4.0)),
+                  ),
+                ),
+              ),
+
+            ],
           ),
         ),
       ),

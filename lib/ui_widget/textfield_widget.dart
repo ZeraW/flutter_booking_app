@@ -35,10 +35,10 @@ class TextFormBuilder extends StatelessWidget {
             obscureText: isPassword != null ? isPassword : false,
             decoration: InputDecoration(
               labelText: '$hint',
-              labelStyle: TextStyle(color: activeBorderColor ??Colors.white, fontSize: Dimensions.getWidth(4.5)),
+              labelStyle: TextStyle(color: activeBorderColor ??Colors.white, fontSize: Dimensions.getWidth(3.5)),
               hintText: "$hint",
               hintStyle: TextStyle(
-                  color: activeBorderColor ??Colors.white, fontSize: Dimensions.getWidth(4.5)),
+                  color: activeBorderColor ??Colors.white, fontSize: Dimensions.getWidth(3.5)),
               contentPadding: new EdgeInsets.symmetric(
                   vertical: Dimensions.getHeight(1.0),
                   horizontal: Dimensions.getWidth(4.0)),

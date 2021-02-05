@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: Dimensions.getWidth(5)),
             )),
         body: snapshot !=null ?Container(
-            width: Dimensions.getHeight(100),
+            width: Dimensions.getWidth(100),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [

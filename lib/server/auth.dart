@@ -47,6 +47,7 @@ class AuthService {
 
       User fbUser = result.user;
       newUser.id = fbUser.uid;
+      await DatabaseService().updateUserData(user: newUser);
 
       newUser.logo =await DatabaseService().uploadImageToStorage(userId:fbUser.uid,file: userImage);
 

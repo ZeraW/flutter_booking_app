@@ -47,14 +47,14 @@ class ChooseLoginType extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            height: Dimensions.getWidth(14),
+            height: Dimensions.getHeight(6),
           ),
           Center(
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(Dimensions.getWidth(15)),
                   child: Container(
-                    height: Dimensions.getHeight(25),
-                    width: Dimensions.getWidth(90),
+                    height: Dimensions.getHeight(20),
+                    width: Dimensions.getWidth(80),
                     decoration: BoxDecoration(
                       color: Colors.white,
                     ),
@@ -71,9 +71,9 @@ class ChooseLoginType extends StatelessWidget {
                 color: MyColors().btnColor.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(Dimensions.getWidth(7))),
             //margin
-            margin: EdgeInsets.symmetric(horizontal: Dimensions.getWidth(4)),
+            margin: EdgeInsets.symmetric(horizontal: Dimensions.isPortrait() ?Dimensions.getWidth(4):Dimensions.getWidth(80)),
             //height
-            height: Dimensions.getHeight(40),
+
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

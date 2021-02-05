@@ -12,11 +12,18 @@ class Dimensions {
     _orientation = MediaQuery.of(context).orientation;
   }
   static _getDesirableWidthX(double percent) {
-    return _width * (percent / 100);
+    return _width * (percent / 150);
+  }
+
+  static isPortrait() {
+    return _orientation == Orientation.portrait;
+  }
+  static isLandScape() {
+    return _orientation != Orientation.portrait;
   }
 
   static _getDesirableHeightX(double percent) {
-    return _height * (percent / 100);
+    return _height * (percent / 150);
   }
 
   static getWidth(double percent) {
