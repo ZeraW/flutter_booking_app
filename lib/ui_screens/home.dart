@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     DocumentSnapshot snapshot = Provider.of<DocumentSnapshot>(context);
 
-    UserModel user = snapshot != null ? new UserModel.fromJson(snapshot.data()) : null;
+
 
     final List<BottomNavigationBarItem> _bottomNavigation = [
       BottomNavigationBarItem(
@@ -47,13 +47,19 @@ class _HomeScreenState extends State<HomeScreen> {
           label: _children[3].keys.first),
     ];
 
-    if(user!=null && user.type=='admin'){
-      _children.add({'Admin Panel': AdminScreen()});
-      _bottomNavigation.add(BottomNavigationBarItem(
-          icon: Icon(Icons.whatshot), label: _children[4].keys.first));
+
+    if(snapshot!=null){
+      UserModel user =UserModel.fromJson(snapshot.data());
+
+      if(user!=null && user.type=='admin'){
+        _children.add({'Admin Panel': AdminScreen()});
+        _bottomNavigation.add(BottomNavigationBarItem(
+            icon: Icon(Icons.whatshot), label: _children[4].keys.first));
+      }
     }
 
-    return snapshot!=null ?Scaffold(
+
+    return Scaffold(
         appBar: new AppBar(
             centerTitle: true,
             elevation: 0.0,
@@ -66,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.bold,
                   fontSize: Dimensions.getWidth(5)),
             )),
-        body: Container(
+        body: snapshot !=null ?Container(
             width: Dimensions.getHeight(100),
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -79,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 end: Alignment.bottomCenter,
               ),
             ),
-            child: _children[_currentIndex].values.first),
+            child: _children[_currentIndex].values.first):SizedBox(),
         bottomNavigationBar:  BottomNavigationBar(
             items: _bottomNavigation,
             onTap: (index) {
@@ -95,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedItemColor: MyColors().white,
             backgroundColor: MyColors().accentColor,
           ),
-        ):SizedBox();
+        );
   }
 }
 
