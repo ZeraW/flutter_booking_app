@@ -6,7 +6,6 @@ import 'package:flutter_booking_app/ui_widget/textfield_widget.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
 import 'package:flutter_booking_app/utils/utils.dart';
 import 'package:provider/provider.dart';
-
 import '../../models/db_model.dart';
 import '../../ui_widget/home_widgets/admin_widgets/admin_card.dart';
 
@@ -150,7 +149,7 @@ class _AddEditCitiescreenState extends State<AddEditCitiescreen> {
     if (cityName == null || cityName.isEmpty) {
       clear();
       setState(() {
-        _cityNameError = "Please enter City capacity";
+        _cityNameError = "Please enter City Name";
       });
     } else {
       clear();
