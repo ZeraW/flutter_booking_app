@@ -154,3 +154,31 @@ class TrainModel {
     return data;
   }
 }
+
+
+class CityModel {
+  String id;
+  final String name;
+
+  CityModel({this.id, this.name});
+
+  List<CityModel> fromQuery(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      return CityModel(
+        id: doc.get('id') ?? '',
+        name: doc.get('name') ?? '',
+      );
+    }).toList();
+  }
+
+  CityModel.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        name = json['name'];
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    return data;
+  }
+}

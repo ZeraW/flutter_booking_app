@@ -65,6 +65,36 @@ class CarCard extends StatelessWidget {
     );
   }
 }
+class CityCard extends StatelessWidget {
+  String title;
+  Function edit, delete;
+
+  CityCard({this.title, this.edit, this.delete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          '$title',
+          style: TextStyle(fontSize: Dimensions.getWidth(4.5)),
+        ),
+        leading: Icon(Icons.location_city,size: Dimensions.getWidth(8),),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GestureDetector(onTap: edit, child: Icon(Icons.edit)),
+            SizedBox(
+              width: Dimensions.getWidth(4),
+            ),
+            GestureDetector(onTap: delete, child: Icon(Icons.delete_forever)),
+          ],
+        ),
+        shape: Border.all(color: Colors.redAccent, width: 5),
+      ),
+    );
+  }
+}
 
 class TrainCard extends StatelessWidget {
   String title;

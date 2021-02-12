@@ -5,6 +5,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_booking_app/models/db_model.dart';
 import 'package:flutter_booking_app/wrapper.dart';
 
+import '../models/db_model.dart';
+import '../ui_widget/home_widgets/admin_widgets/admin_card.dart';
+
 class DatabaseService {
   // Users collection reference
   final CollectionReference userCollection =
@@ -13,6 +16,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('Trains');
   final CollectionReference carsCollection =
       FirebaseFirestore.instance.collection('Cars');
+  final CollectionReference citiesCollection =
+  FirebaseFirestore.instance.collection('Cities');
 
 /////////////////////////////////// User ///////////////////////////////////
   //get my user
@@ -114,7 +119,33 @@ class DatabaseService {
 
   /////////////////////////////////// Train ///////////////////////////////////
 
-  /// ////////////////////////////// utils ///////////////////////////////////
+  /// //////////////////////////////// City //////////////////////////////// ///
+  //add new City
+
+  Future addCity({CityModel newCity}) async {
+    var ref = citiesCollection.doc();
+    newCity.id = ref.id;
+    return await ref.set(newCity.toJson());
+  }
+
+  //update existing car
+  Future updateCity({CityModel updatedCity}) async {
+    return await citiesCollection.doc(updatedCity.id).update(updatedCity.toJson());
+  }
+
+  //delete existing car
+  Future deleteCity({CityModel deleteCity}) async {
+    return await citiesCollection.doc(deleteCity.id).delete();
+  }
+
+  // stream for live cars
+  Stream<List<CityModel>> get getLiveCities {
+    return citiesCollection.snapshots().map(CityModel().fromQuery);
+  }
+
+  /// //////////////////////////////// City //////////////////////////////// ///
+
+  ///////////////////////////////// utils ///////////////////////////////////
   Future batch({UserModel user}) async {
     //batch used to add or edit multiple doc at the same time
     var batch = FirebaseFirestore.instance.batch();
@@ -139,7 +170,7 @@ class DatabaseService {
   'user_fav': FieldValue.arrayRemove(['12345'])
   });*/
 
-  /// ///////////////////////////// utils ///////////////////////////////////
+  //////////////////////////////// utils ///////////////////////////////////
 }
 /*
 //post fluff <Message>

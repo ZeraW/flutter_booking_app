@@ -4,11 +4,14 @@ import 'package:flutter_booking_app/models/db_model.dart';
 import 'package:flutter_booking_app/server/database_api.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_booking.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_cars.dart';
+import 'package:flutter_booking_app/ui_screens/admin_widgets/m_citys.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_trains.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_trips.dart';
 import 'package:flutter_booking_app/ui_widget/home_widgets/admin_widgets/admin_card.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
 import 'package:provider/provider.dart';
+
+import '../../models/db_model.dart';
 
 class AdminScreen extends StatefulWidget {
   @override
@@ -31,6 +34,11 @@ class _AdminScreenState extends State<AdminScreen> {
               open: StreamProvider<List<CarModel>>.value(
                   value: DatabaseService().getLiveCars,
                   child: ManageCarsScreen())),
+          AdminCard(
+              title: 'Manage Cities',
+              open: StreamProvider<List<CityModel>>.value(
+                  value: DatabaseService().getLiveCities,
+                  child: ManageCitiesScreen())),
           AdminCard(title: 'Manage Trips', open: ManageTripsScreen()),
           AdminCard(title: 'Manage Booking', open: ManageBookingsScreen())
         ],
