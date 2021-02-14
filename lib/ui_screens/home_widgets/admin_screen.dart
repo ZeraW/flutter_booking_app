@@ -26,9 +26,11 @@ class _AdminScreenState extends State<AdminScreen> {
       child: Column(
         children: [
           SizedBox(height: Dimensions.getHeight(1)),
-          AdminCard(title: 'Manage Trains', open: StreamProvider<List<TrainModel>>.value(
-              value: DatabaseService().getLiveTrains,
-              child:  ManageTrainsScreen())),
+          AdminCard(
+              title: 'Manage Trains',
+              open: StreamProvider<List<TrainModel>>.value(
+                  value: DatabaseService().getLiveTrains,
+                  child: ManageTrainsScreen())),
           AdminCard(
               title: 'Manage Cars',
               open: StreamProvider<List<CarModel>>.value(
@@ -39,7 +41,14 @@ class _AdminScreenState extends State<AdminScreen> {
               open: StreamProvider<List<CityModel>>.value(
                   value: DatabaseService().getLiveCities,
                   child: ManageCitiesScreen())),
-          AdminCard(title: 'Manage Trips', open: ManageTripsScreen()),
+          AdminCard(
+              title: 'Manage Trips',
+              open: MultiProvider(providers: [
+                StreamProvider<List<CityModel>>.value(
+                    value: DatabaseService().getLiveCities),
+                StreamProvider<List<TrainModel>>.value(
+                    value: DatabaseService().getLiveTrains),
+              ], child: ManageTripsScreen())),
           AdminCard(title: 'Manage Booking', open: ManageBookingsScreen())
         ],
       ),

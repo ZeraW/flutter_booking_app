@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_booking_app/models/db_model.dart';
 import 'package:flutter_booking_app/server/database_api.dart';
+import 'package:flutter_booking_app/ui_widget/drop_down.dart';
 import 'package:flutter_booking_app/ui_widget/home_widgets/admin_widgets/admin_card.dart';
 import 'package:flutter_booking_app/ui_widget/textfield_widget.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
@@ -80,6 +81,8 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
   TextEditingController _trainIdController = new TextEditingController();
   TextEditingController _classAnumController = new TextEditingController();
   TextEditingController _classBnumController = new TextEditingController();
+  String trainType;
+  String _trainTypeError = "";
 
   String _trainIdError = "";
   String _classAnumError = "";
@@ -125,6 +128,20 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
                 errorText: _trainIdError,
                 activeBorderColor: MyColors().mainColor,
 
+              ),
+              SizedBox(
+                height: Dimensions.getHeight(3.0),
+              ),
+              DropDownStringList(
+                errorText: _trainTypeError,
+                mList: ['Express', 'Super Fast'],
+                hint: 'Train Type',
+                selectedItem: trainType,
+                onChange: (String value) {
+                  setState(() {
+                    trainType = value;
+                  });
+                },
               ),
               SizedBox(
                 height: Dimensions.getHeight(3.0),
@@ -182,7 +199,12 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
       setState(() {
         _trainIdError = "Please enter train name";
       });
-    } else if (classAcount == null || classAcount.isEmpty) {
+    } else if (trainType == null || trainType.isEmpty) {
+      clear();
+      setState(() {
+        _trainTypeError = "Please select train type";
+      });
+    }else if (classAcount == null || classAcount.isEmpty) {
       clear();
       setState(() {
         _classAnumError = "Please enter car count";
@@ -198,6 +220,7 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
       TrainModel newTrain = TrainModel(
         id: widget.editTrain != null? widget.editTrain.id:'',
           name: trainName,
+          trainType: trainType,
           classAcount: int.parse(classAcount),
           classBcount: int.parse(classBcount));
       widget.editTrain == null
@@ -210,6 +233,7 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
 
   void clear() {
     setState(() {
+      _trainTypeError="";
       _trainIdError = "";
       _classAnumError = "";
       _classBnumError = "";

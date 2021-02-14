@@ -35,9 +35,6 @@ class ManageCitiesScreen extends StatelessWidget {
               itemBuilder: (ctx, index) {
                 return CityCard(
                   title: mList[index].name,
-                  delete: () async {
-                    await DatabaseService().deleteCity(deleteCity: mList[index]);
-                  },
                   edit: () async {
                     Navigator.push(
                         context,
@@ -51,7 +48,7 @@ class ManageCitiesScreen extends StatelessWidget {
             )
           : SizedBox(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _increment(context),
+        onPressed: () => _increment(context: context,nextId: mList!=null ? mList.length+1:0),
         tooltip: 'Increment',
         backgroundColor: MyColors().mainColor.withOpacity(0.9),
         child: Icon(
@@ -61,15 +58,15 @@ class ManageCitiesScreen extends StatelessWidget {
     );
   }
 
-  void _increment(BuildContext context) {
+  void _increment({BuildContext context,int nextId}) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (_) => AddEditCitiescreen()));
+        context, MaterialPageRoute(builder: (_) => AddEditCitiescreen(nextId: nextId.toString(),)));
   }
 }
 class AddEditCitiescreen extends StatefulWidget {
   CityModel editCity;
-
-  AddEditCitiescreen({this.editCity});
+  String nextId;
+  AddEditCitiescreen({this.editCity,this.nextId});
 
   @override
   _AddEditCitiescreenState createState() => _AddEditCitiescreenState();
@@ -154,7 +151,7 @@ class _AddEditCitiescreenState extends State<AddEditCitiescreen> {
     } else {
       clear();
       //do request
-      CityModel newCity = CityModel(id: widget.editCity != null? widget.editCity.id:'',name: cityName);
+      CityModel newCity = CityModel(id: widget.editCity != null? widget.editCity.id:widget.nextId,name: cityName);
       widget.editCity == null
           ? await DatabaseService().addCity(newCity: newCity)
           : await DatabaseService().updateCity(updatedCity: newCity);

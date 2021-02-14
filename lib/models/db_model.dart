@@ -122,17 +122,19 @@ class CarModel {
 
 class TrainModel {
    String id;
-  final String name;
+  final String name,trainType;
   final int classAcount;
   final int classBcount;
 
-  TrainModel({this.id, this.name, this.classAcount, this.classBcount});
+  TrainModel({this.id, this.name, this.trainType,this.classAcount, this.classBcount});
 
   List<TrainModel> fromQuery(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return TrainModel(
         id: doc.get('id') ?? '',
         name: doc.get('name') ?? '',
+        trainType: doc.get('trainType') ?? '',
+
         classAcount: doc.get('classAcount') ?? 0,
         classBcount: doc.get('classBcount') ?? 0,
       );
@@ -142,13 +144,17 @@ class TrainModel {
   TrainModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'],
-        classAcount = json['classAcount'],
+        trainType = json['trainType'],
+
+      classAcount = json['classAcount'],
         classBcount = json['classBcount'];
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
+    data['trainType'] = this.trainType;
+
     data['classAcount'] = this.classAcount;
     data['classBcount'] = this.classBcount;
     return data;
@@ -179,6 +185,63 @@ class CityModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
+    return data;
+  }
+}
+
+
+class TripModel {
+  String id;
+  final CityModel source,destination;
+  final String dateFrom,dateTo;
+  final TrainModel trainId;
+  final int priceOfClassA,priceOfClassB,numberOfStops;
+  final List<CityModel> stops;
+
+  TripModel({this.id, this.source,this.destination,this.dateFrom,this.numberOfStops,this.dateTo,this.priceOfClassA,this.priceOfClassB,this.stops,this.trainId});
+
+  List<TripModel> fromQuery(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      return TripModel(
+        id: doc.get('id') ?? '',
+        source: doc.get('source') ?? CityModel(),
+        destination: doc.get('destination') ?? CityModel(),
+        dateFrom: doc.get('dateFrom') ?? DateTime.now().toString(),
+        dateTo: doc.get('dateTo') ?? DateTime.now().toString(),
+        trainId: doc.get('trainId') ?? '',
+        priceOfClassA: doc.get('priceOfClassA') ?? 0,
+        priceOfClassB: doc.get('priceOfClassB') ?? 0,
+        numberOfStops: doc.get('numberOfStops') ?? 0,
+        stops: doc.get('stops') ?? []
+      );
+    }).toList();
+  }
+
+  TripModel.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        source = json['source'],
+        destination = json['destination'],
+        dateFrom = json['dateFrom'],
+        dateTo = json['dateTo'],
+        trainId = json['trainId'],
+        priceOfClassA = json['priceOfClassA'],
+        priceOfClassB = json['priceOfClassB'],
+        numberOfStops = json['numberOfStops'],
+        stops = json['stops'];
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['destination'] = this.destination;
+    data['source'] = this.source;
+    data['dateFrom'] = this.dateFrom;
+    data['dateTo'] = this.dateTo;
+    data['trainId'] = this.trainId;
+    data['priceOfClassA'] = this.priceOfClassA;
+    data['priceOfClassB'] = this.priceOfClassB;
+    data['numberOfStops'] = this.numberOfStops;
+    data['stops'] = this.stops;
+
     return data;
   }
 }

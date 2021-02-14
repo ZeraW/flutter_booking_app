@@ -18,6 +18,7 @@ class TextFormBuilder extends StatelessWidget {
     return Column(
       children: [
         TextFormField(
+
           // maxLength: maxLength,
             controller: controller,
             validator: (value) {

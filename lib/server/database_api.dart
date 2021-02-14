@@ -123,19 +123,18 @@ class DatabaseService {
   //add new City
 
   Future addCity({CityModel newCity}) async {
-    var ref = citiesCollection.doc();
-    newCity.id = ref.id;
+    var ref = citiesCollection.doc(newCity.id.toString());
     return await ref.set(newCity.toJson());
   }
 
   //update existing car
   Future updateCity({CityModel updatedCity}) async {
-    return await citiesCollection.doc(updatedCity.id).update(updatedCity.toJson());
+    return await citiesCollection.doc(updatedCity.id.toString()).update(updatedCity.toJson());
   }
 
   //delete existing car
   Future deleteCity({CityModel deleteCity}) async {
-    return await citiesCollection.doc(deleteCity.id).delete();
+    return await citiesCollection.doc(deleteCity.id.toString()).delete();
   }
 
   // stream for live cars

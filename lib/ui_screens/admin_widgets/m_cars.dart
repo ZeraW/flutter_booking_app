@@ -117,6 +117,7 @@ class _AddEditCarScreenState extends State<AddEditCarScreen> {
               errorText: _carClassError,
               mList: ['A', 'B'],
               selectedItem: carClass,
+              hint: 'Class',
               onChange: (String value) {
                 setState(() {
                   carClass = value;

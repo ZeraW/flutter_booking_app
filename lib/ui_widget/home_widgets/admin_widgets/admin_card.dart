@@ -68,8 +68,8 @@ class CarCard extends StatelessWidget {
 class CityCard extends StatelessWidget {
   String title;
   Function edit, delete;
-
-  CityCard({this.title, this.edit, this.delete});
+  Key key;
+  CityCard({this.title, this.key,this.edit, this.delete});
 
   @override
   Widget build(BuildContext context) {
@@ -84,10 +84,6 @@ class CityCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             GestureDetector(onTap: edit, child: Icon(Icons.edit)),
-            SizedBox(
-              width: Dimensions.getWidth(4),
-            ),
-            GestureDetector(onTap: delete, child: Icon(Icons.delete_forever)),
           ],
         ),
         shape: Border.all(color: Colors.redAccent, width: 5),
