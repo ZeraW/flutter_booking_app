@@ -1,7 +1,9 @@
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_booking_app/models/db_model.dart';
+import 'package:flutter_booking_app/server/database_api.dart';
 import 'package:flutter_booking_app/ui_widget/drop_down.dart';
+import 'package:flutter_booking_app/ui_widget/home_widgets/admin_widgets/admin_card.dart';
 import 'package:flutter_booking_app/ui_widget/textfield_widget.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
 import 'package:flutter_booking_app/utils/utils.dart';
@@ -12,6 +14,7 @@ class ManageTripsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     List<CityModel> mCityList = Provider.of<List<CityModel>>(context);
     List<TrainModel> mTrainList = Provider.of<List<TrainModel>>(context);
+    List<TripModel> mTripList = Provider.of<List<TripModel>>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -25,15 +28,36 @@ class ManageTripsScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: Dimensions.getWidth(5)),
           )),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[],
-        ),
-      ),
+      body: mTripList != null
+          ? ListView.builder(
+        padding: EdgeInsets.symmetric(
+            horizontal: Dimensions.getWidth(2),
+            vertical: Dimensions.getHeight(1.5)),
+        shrinkWrap: true,
+        itemBuilder: (ctx, index) {
+          return TripsCard(
+            date: mTripList[index].dateFrom,
+              destination: mTripList[index].destination,
+            source: mTripList[index].source,
+
+            delete: () async {
+              await DatabaseService().deleteTrip(deleteTrip: mTripList[index]);
+            },
+            edit: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => AddEditTripScreen(editTrip: mTripList[index],citiesList: mCityList,trainsList: mTrainList)));
+            },
+          );
+        },
+        itemCount: mTripList.length,
+      )
+          : SizedBox(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _increment(
-            context: context, cityList: mCityList, trainList: mTrainList),
+        onPressed: () =>
+            _increment(
+                context: context, cityList: mCityList, trainList: mTrainList),
         tooltip: 'Increment',
         backgroundColor: MyColors().mainColor.withOpacity(0.9),
         child: Icon(
@@ -43,18 +67,18 @@ class ManageTripsScreen extends StatelessWidget {
     );
   }
 
-  void _increment(
-      {BuildContext context,
-      List<CityModel> cityList,
-      List<TrainModel> trainList}) {
+  void _increment({BuildContext context,
+    List<CityModel> cityList,
+    List<TrainModel> trainList}) {
     cityList != null && trainList != null
         ? Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (_) => AddEditTripScreen(
-                      citiesList: cityList,
-                      trainsList: trainList,
-                    )))
+        context,
+        MaterialPageRoute(
+            builder: (_) =>
+                AddEditTripScreen(
+                  citiesList: cityList,
+                  trainsList: trainList,
+                )))
         : null;
   }
 }
@@ -78,27 +102,36 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
   TrainModel selectedTrain;
   String dateFrom, dateTo;
   List<CityModel> stopsList = [];
-
+  String priceOfA ;
+  String priceOfB ;
+  String stops ;
+  List<String> keyWords=[];
   String _sourceError = "";
   String _destinationError = "";
-  String _dateFromError = "";
-  String _dateToError = "";
   String _trainError = "";
   String _priceAError = "";
   String _priceBError = "";
-  String _noOfStopsError = "";
-  String _stopsError = "";
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     if (widget.editTrip != null) {
-      _priceOfClassAController.text = widget.editTrip.priceOfClassA.toString();
-      _priceOfClassBController.text = widget.editTrip.priceOfClassB.toString();
-      _noOfStopsController.text = widget.editTrip.numberOfStops.toString();
-      dateFrom = widget.editTrip.dateFrom;
-      dateTo = widget.editTrip.dateTo;
+      if(widget.citiesList!=null&&widget.trainsList!=null){
+        _priceOfClassAController.text = widget.editTrip.priceOfClassA.toString();
+        _priceOfClassBController.text = widget.editTrip.priceOfClassB.toString();
+        dateFrom = widget.editTrip.dateFrom;
+        dateTo = widget.editTrip.dateTo;
+        selectedTrain = widget.trainsList.firstWhere((element) => element.id==widget.editTrip.trainId);
+        sourceCity = widget.citiesList.firstWhere((element) => element.id==widget.editTrip.source);
+        destinationCity = widget.citiesList.firstWhere((element) => element.id==widget.editTrip.destination);
+        getStopsBetweenTwoCities(source: sourceCity,
+            destination: destinationCity,
+            citiesList: widget.citiesList);
+      }
+
+
     } else {
       dateFrom = DateTime.now().toString();
       dateTo = DateTime.now().toString();
@@ -128,7 +161,7 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
               SizedBox(
                 height: Dimensions.getHeight(2.0),
               ),
-              DropDownCityList(
+              widget.citiesList!=null ?DropDownCityList(
                   mList: widget.citiesList,
                   hint: 'Source',
                   selectedItem: sourceCity,
@@ -136,13 +169,16 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
                   onChange: (CityModel value) {
                     setState(() {
                       sourceCity = value;
-                      destinationCity!=null ? getStopsBetweenTwoCities(source: sourceCity,destination: destinationCity,citiesList: widget.citiesList):'';
+                      destinationCity != null ? getStopsBetweenTwoCities(
+                          source: sourceCity,
+                          destination: destinationCity,
+                          citiesList: widget.citiesList) : '';
                     });
-                  }),
+                  }):SizedBox(),
               SizedBox(
                 height: Dimensions.getHeight(2.0),
               ),
-              DropDownCityList(
+              widget.citiesList!=null ?DropDownCityList(
                   mList: widget.citiesList,
                   hint: 'Destination',
                   selectedItem: destinationCity,
@@ -150,14 +186,16 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
                   onChange: (CityModel value) {
                     setState(() {
                       destinationCity = value;
-                      sourceCity!=null ? getStopsBetweenTwoCities(source: sourceCity,destination: destinationCity,citiesList: widget.citiesList):'';
-
+                      sourceCity != null ? getStopsBetweenTwoCities(
+                          source: sourceCity,
+                          destination: destinationCity,
+                          citiesList: widget.citiesList) : '';
                     });
-                  }),
+                  }):SizedBox(),
               SizedBox(
                 height: Dimensions.getHeight(2.0),
               ),
-              DropDownTrainList(
+              widget.trainsList!=null ?DropDownTrainList(
                   mList: widget.trainsList,
                   selectedItem: selectedTrain,
                   errorText: _trainError,
@@ -165,21 +203,23 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
                     setState(() {
                       selectedTrain = value;
                     });
-                  }),
+                  }):SizedBox(),
               SizedBox(
                 height: Dimensions.getHeight(1.0),
               ),
               selectedTrain != null && selectedTrain.trainType == 'Express'
                   ? Wrap(
                 children: stopsList
-                    .map((item) => Container(
-                    decoration: BoxDecoration(border: Border.all()),
-                    margin: EdgeInsets.symmetric(horizontal: 4,vertical: 3),
-                    padding: EdgeInsets.all(5),
-                    child: Text(item.name)))
+                    .map((item) =>
+                    Container(
+                        decoration: BoxDecoration(border: Border.all()),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 4, vertical: 3),
+                        padding: EdgeInsets.all(5),
+                        child: Text(item.name)))
                     .toList()
                     .cast<Widget>(),
-              ):SizedBox(),
+              ) : SizedBox(),
               SizedBox(
                 height: Dimensions.getHeight(1.0),
               ),
@@ -187,7 +227,6 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
                   type: DateTimePickerType.dateTimeSeparate,
                   dateMask: 'd MMM, yyyy',
                   initialValue: dateFrom,
-                  use24HourFormat: false,
                   firstDate: DateTime(2020),
                   lastDate: DateTime(2100),
                   icon: Icon(Icons.event),
@@ -197,8 +236,7 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
                     setState(() {
                       print(val);
                       dateFrom = val;
-                      DateTime tempDate = new DateFormat("yyyy-MM-dd h:m").parse(val);
-                      print(tempDate.toString());
+
                     });
                   }),
               SizedBox(
@@ -210,7 +248,6 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
                   initialValue: dateTo,
                   firstDate: DateTime(2020),
                   lastDate: DateTime(2100),
-                  use24HourFormat: false,
                   icon: Icon(Icons.event),
                   dateLabelText: 'Arrive At',
                   timeLabelText: "Hour",
@@ -267,37 +304,33 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
 
   void getStopsBetweenTwoCities(
       {CityModel source, CityModel destination, List<CityModel> citiesList}) {
-    stopsList =[];
-    for(int i=0; i<citiesList.length ; i++){
-      if(int.parse(source.id)<=int.parse(destination.id)){
-        _noOfStopsController.text = (int.parse(destination.id)-int.parse(source.id)-1).toString();
+    stopsList = [];
+    for (int i = 0; i < citiesList.length; i++) {
+      if (int.parse(source.id) <= int.parse(destination.id)) {
+        _noOfStopsController.text =
+            (int.parse(destination.id) - int.parse(source.id) - 1).toString();
 
 
-
-        if(i>int.parse(source.id) && i<int.parse(destination.id)){
-          stopsList.add(citiesList[i-1]);
+        if (i > int.parse(source.id) && i < int.parse(destination.id)) {
+          stopsList.add(citiesList[i - 1]);
         }
+      } else {
+        if (i >= int.parse(destination.id) && i <= int.parse(source.id)) {
+          _noOfStopsController.text =
+              (int.parse(source.id) - int.parse(destination.id) - 1).toString();
 
-      }else{
-        if(i>=int.parse(destination.id) && i<=int.parse(source.id)){
-          _noOfStopsController.text = (int.parse(source.id)-int.parse(destination.id)-1).toString();
-
-          if(i>int.parse(destination.id) && i<int.parse(source.id)){
-            stopsList.add(citiesList[i-1]);
+          if (i > int.parse(destination.id) && i < int.parse(source.id)) {
+            stopsList.add(citiesList[i - 1]);
           }
         }
       }
     }
-
-
-
-
   }
 
   void _apiRequest() async {
-    String priceOfA = _priceOfClassAController.text;
-    String priceOfB = _priceOfClassBController.text;
-    String stops = _noOfStopsController.text;
+     priceOfA = _priceOfClassAController.text;
+     priceOfB = _priceOfClassBController.text;
+     stops = _noOfStopsController.text;
 
     if (sourceCity == null) {
       setState(() {
@@ -313,17 +346,7 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
       setState(() {
         _trainError = "Please select train";
       });
-    } else if (dateFrom == null || dateFrom.isEmpty) {
-      clear();
-      setState(() {
-        _dateFromError = "Please select departure date";
-      });
-    } else if (dateTo == null || dateTo.isEmpty) {
-      clear();
-      setState(() {
-        _dateToError = "Please select arrival date";
-      });
-    } else if (priceOfA == null || priceOfA.isEmpty) {
+    }  else if (priceOfA == null || priceOfA.isEmpty) {
       clear();
       setState(() {
         _priceAError = "Please enter class A price";
@@ -335,33 +358,52 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
       });
     } else {
       clear();
-
-      print('${stopsList.toString().toString()}');
-      //do request
-      /* TripModel newTrip = TripModel(
-          id: widget.editTrip != null ? widget.editTrip.id : '',
-          name: TripName,
-          classAcount: int.parse(classAcount),
-          classBcount: int.parse(classBcount));
-      widget.editTrip == null
-          ? await DatabaseService().addTrip(newTrip: newTrip)
-          : await DatabaseService().updateTrip(updatedTrip: newTrip);
-
-      Navigator.pop(context);*/
+      createSearchKeywordsList();
+      if(keyWords.length>0){
+        TripModel newTrip = new TripModel(source: sourceCity.id.toString(),
+            destination: destinationCity.id.toString(),
+            id: widget.editTrip != null ? widget.editTrip.id : '',
+            dateFrom: dateFrom,
+            dateTo: dateTo,
+            priceOfClassA: int.parse(priceOfA),
+            priceOfClassB: int.parse(priceOfB),
+            stops: stopsList,
+            keyWords: keyWords,
+            numberOfStops: selectedTrain.trainType=='Express'?stops:'0',
+            trainId: selectedTrain.id.toString());
+        widget.editTrip == null
+            ? await DatabaseService().addTrip(newTrip: newTrip)
+            : await DatabaseService().updateTrip(updatedTrip: newTrip);
+        Navigator.pop(context);
+      }
     }
+  }
+
+  void createSearchKeywordsList(){
+    keyWords.clear();
+    keyWords.add('city:${sourceCity.id.toString()}');
+    keyWords.add('city:${destinationCity.id.toString()}');
+    if(selectedTrain.trainType=='Express'){
+      for(int i=0 ; i<stopsList.length; i++){
+        keyWords.add('city:${stopsList[i].id.toString()}');
+      }
+    }
+    keyWords.add('date:${dateFrom.substring(0, 10)}');
+    keyWords.add('priceA:$priceOfA');
+    keyWords.add('priceB:$priceOfB');
+    keyWords.add('trainId:${selectedTrain.id}');
+    keyWords.add('trainType:${selectedTrain.trainType}');
+
+    print(keyWords.toString());
   }
 
   void clear() {
     setState(() {
       _sourceError = "";
       _destinationError = "";
-      _dateFromError = "";
-      _dateToError = "";
       _trainError = "";
       _priceAError = "";
       _priceBError = "";
-      _noOfStopsError = "";
-      _stopsError = "";
     });
   }
 }

@@ -18,6 +18,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('Cars');
   final CollectionReference citiesCollection =
   FirebaseFirestore.instance.collection('Cities');
+  final CollectionReference tripCollection =
+  FirebaseFirestore.instance.collection('Trips');
 
 /////////////////////////////////// User ///////////////////////////////////
   //get my user
@@ -144,7 +146,33 @@ class DatabaseService {
 
   /// //////////////////////////////// City //////////////////////////////// ///
 
-  ///////////////////////////////// utils ///////////////////////////////////
+  /////////////////////////////////// Trips ///////////////////////////////////
+  //add new car
+  Future addTrip({TripModel newTrip}) async {
+    var ref = tripCollection.doc();
+    newTrip.id = ref.id;
+    return await ref.set(newTrip.toJson());
+  }
+
+  //update existing car
+  Future updateTrip({TripModel updatedTrip}) async {
+    return await tripCollection
+        .doc(updatedTrip.id)
+        .update(updatedTrip.toJson());
+  }
+
+  //delete existing car
+  Future deleteTrip({TripModel deleteTrip}) async {
+    return await tripCollection.doc(deleteTrip.id).delete();
+  }
+
+  // stream for live cars
+  Stream<List<TripModel>> get getLiveTrips {
+    return tripCollection.snapshots().map(TripModel().fromQuery);
+  }
+
+  /////////////////////////////////// Trips ///////////////////////////////////
+  /// ////////////////////////////// utils ///////////////////////////////////
   Future batch({UserModel user}) async {
     //batch used to add or edit multiple doc at the same time
     var batch = FirebaseFirestore.instance.batch();
@@ -169,7 +197,7 @@ class DatabaseService {
   'user_fav': FieldValue.arrayRemove(['12345'])
   });*/
 
-  //////////////////////////////// utils ///////////////////////////////////
+  /// ///////////////////////////// utils ///////////////////////////////////
 }
 /*
 //post fluff <Message>

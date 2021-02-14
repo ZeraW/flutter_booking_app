@@ -96,6 +96,7 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
       _trainIdController.text = widget.editTrain.name;
       _classAnumController.text = widget.editTrain.classAcount.toString();
       _classBnumController.text = widget.editTrain.classBcount.toString();
+      trainType= widget.editTrain.trainType;
     }
   }
 

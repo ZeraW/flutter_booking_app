@@ -48,6 +48,8 @@ class _AdminScreenState extends State<AdminScreen> {
                     value: DatabaseService().getLiveCities),
                 StreamProvider<List<TrainModel>>.value(
                     value: DatabaseService().getLiveTrains),
+                StreamProvider<List<TripModel>>.value(
+                    value: DatabaseService().getLiveTrips),
               ], child: ManageTripsScreen())),
           AdminCard(title: 'Manage Booking', open: ManageBookingsScreen())
         ],

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
@@ -121,12 +123,13 @@ class CarModel {
 }
 
 class TrainModel {
-   String id;
-  final String name,trainType;
+  String id;
+  final String name, trainType;
   final int classAcount;
   final int classBcount;
 
-  TrainModel({this.id, this.name, this.trainType,this.classAcount, this.classBcount});
+  TrainModel(
+      {this.id, this.name, this.trainType, this.classAcount, this.classBcount});
 
   List<TrainModel> fromQuery(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
@@ -134,7 +137,6 @@ class TrainModel {
         id: doc.get('id') ?? '',
         name: doc.get('name') ?? '',
         trainType: doc.get('trainType') ?? '',
-
         classAcount: doc.get('classAcount') ?? 0,
         classBcount: doc.get('classBcount') ?? 0,
       );
@@ -145,8 +147,7 @@ class TrainModel {
       : id = json['id'],
         name = json['name'],
         trainType = json['trainType'],
-
-      classAcount = json['classAcount'],
+        classAcount = json['classAcount'],
         classBcount = json['classBcount'];
 
   Map<String, dynamic> toJson() {
@@ -161,9 +162,8 @@ class TrainModel {
   }
 }
 
-
 class CityModel {
-  String id;
+  final String id;
   final String name;
 
   CityModel({this.id, this.name});
@@ -189,31 +189,44 @@ class CityModel {
   }
 }
 
-
 class TripModel {
   String id;
-  final CityModel source,destination;
-  final String dateFrom,dateTo;
-  final TrainModel trainId;
-  final int priceOfClassA,priceOfClassB,numberOfStops;
+  final String source, destination;
+  final String dateFrom, dateTo, numberOfStops;
+  final String trainId;
+  final int priceOfClassA, priceOfClassB;
   final List<CityModel> stops;
+  final List<String> keyWords;
 
-  TripModel({this.id, this.source,this.destination,this.dateFrom,this.numberOfStops,this.dateTo,this.priceOfClassA,this.priceOfClassB,this.stops,this.trainId});
+  TripModel(
+      {this.id,
+      this.source,
+      this.destination,
+      this.dateFrom,
+      this.keyWords,
+      this.numberOfStops,
+      this.dateTo,
+      this.priceOfClassA,
+      this.priceOfClassB,
+      this.stops,
+      this.trainId});
 
   List<TripModel> fromQuery(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       return TripModel(
-        id: doc.get('id') ?? '',
-        source: doc.get('source') ?? CityModel(),
-        destination: doc.get('destination') ?? CityModel(),
-        dateFrom: doc.get('dateFrom') ?? DateTime.now().toString(),
-        dateTo: doc.get('dateTo') ?? DateTime.now().toString(),
-        trainId: doc.get('trainId') ?? '',
-        priceOfClassA: doc.get('priceOfClassA') ?? 0,
-        priceOfClassB: doc.get('priceOfClassB') ?? 0,
-        numberOfStops: doc.get('numberOfStops') ?? 0,
-        stops: doc.get('stops') ?? []
-      );
+          id: doc.get('id') ?? '',
+          source: doc.get('source') ?? CityModel(),
+          destination: doc.get('destination') ?? CityModel(),
+          dateFrom: doc.get('dateFrom') ?? DateTime.now().toString(),
+          dateTo: doc.get('dateTo') ?? DateTime.now().toString(),
+          trainId: doc.get('trainId') ?? '',
+          priceOfClassA: doc.get('priceOfClassA') ?? 0,
+          priceOfClassB: doc.get('priceOfClassB') ?? 0,
+          numberOfStops: doc.get('numberOfStops') ?? 0,
+          stops: List.from(doc.get('stops'))
+                  .map((data) => CityModel.fromJson(data))
+                  .toList() ?? [],
+          keyWords: List.from(doc.get('keyWords')) ?? []);
     }).toList();
   }
 
@@ -227,6 +240,7 @@ class TripModel {
         priceOfClassA = json['priceOfClassA'],
         priceOfClassB = json['priceOfClassB'],
         numberOfStops = json['numberOfStops'],
+        keyWords = json['keyWords'],
         stops = json['stops'];
 
   Map<String, dynamic> toJson() {
@@ -239,8 +253,9 @@ class TripModel {
     data['trainId'] = this.trainId;
     data['priceOfClassA'] = this.priceOfClassA;
     data['priceOfClassB'] = this.priceOfClassB;
+    data['keyWords'] = this.keyWords;
     data['numberOfStops'] = this.numberOfStops;
-    data['stops'] = this.stops;
+    data['stops'] = this.stops.map((i) => i.toJson()).toList();
 
     return data;
   }

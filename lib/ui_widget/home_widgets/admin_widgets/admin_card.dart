@@ -147,3 +147,47 @@ class TrainCard extends StatelessWidget {
   }
 }
 
+
+class TripsCard extends StatelessWidget {
+  String date;
+  String source;
+  String destination;
+
+  Function edit, delete;
+
+  TripsCard({this.date, this.source,this.destination, this.edit, this.delete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          'From: $source - To: $destination',
+          style: TextStyle(fontSize: Dimensions.getWidth(4.5)),
+        ),
+        subtitle: Text(
+          "Date : $date",
+          style: TextStyle(
+              fontSize: Dimensions.getWidth(3.5), fontWeight: FontWeight.w600),
+        ),
+        leading: Image.asset(
+          'assets/images/destination.png',
+          height: Dimensions.getWidth(8),
+          width: Dimensions.getWidth(8),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GestureDetector(onTap: edit, child: Icon(Icons.edit)),
+            SizedBox(
+              width: Dimensions.getWidth(4),
+            ),
+            GestureDetector(onTap: delete, child: Icon(Icons.delete_forever)),
+          ],
+        ),
+        shape: Border.all(color: Colors.redAccent, width: 5),
+      ),
+    );
+  }
+}
+
