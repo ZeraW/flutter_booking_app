@@ -11,7 +11,7 @@ class ManageBookingsScreen extends StatelessWidget {
       appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          backgroundColor: MyColors().pinkColor,
+          backgroundColor: Uti().pinkColor,
           title: Text(
             'Manage Bookings',
             style: TextStyle(

@@ -62,11 +62,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 .toggleWidgets(currentPage: 1, type: widget.type),
             child: Icon(
               Icons.chevron_left,
-              color: MyColors().mainColor,
+              color: Uti().mainColor,
               size: Dimensions.getWidth(8.0),
             ),
           ),
-          backgroundColor: MyColors().pinkColor,
+          backgroundColor: Uti().pinkColor,
           title: Text(
             "Sign Up",
             style: TextStyle(
@@ -77,8 +77,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              MyColors().pinkColor,
-              MyColors().accentColor,
+              Uti().pinkColor,
+              Uti().accentColor,
             ],
             stops: [0.1, 1],
             begin: Alignment.topCenter,
@@ -165,7 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: () {
                     _reg(context);
                   },
-                  color: MyColors().mainColor,
+                  color: Uti().mainColor,
                   child: Text(
                     "Sign Up",
                     style: TextStyle(

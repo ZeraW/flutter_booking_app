@@ -8,9 +8,10 @@ class DropDownStringList extends StatelessWidget {
   final List<String> mList;
   final Function onChange;
   final String errorText,hint,selectedItem;
+  final bool enableBorder;
 
   DropDownStringList(
-      {this.selectedItem, this.mList,this.hint, this.onChange, this.errorText});
+      {this.selectedItem, this.mList,this.hint, this.onChange, this.errorText,this.enableBorder=true});
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +20,11 @@ class DropDownStringList extends StatelessWidget {
       children: [
         Container(
           width: double.maxFinite,
-          padding: EdgeInsets.symmetric(horizontal: Dimensions.getWidth(2)),
+          height: enableBorder ?null:Dimensions.getHeight(3.5),
+          padding: enableBorder ?EdgeInsets.symmetric(horizontal: Dimensions.getWidth(2)):null,
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.black54, style: BorderStyle.solid),
-            borderRadius: BorderRadius.circular(4),
+            border: enableBorder ?Border.all(color: Colors.black54, style: BorderStyle.solid):null,
+            borderRadius: enableBorder ?BorderRadius.circular(4):null,
           ),
           child: new DropdownButton<String>(
               items: mList.map((String value) {
@@ -33,12 +35,15 @@ class DropDownStringList extends StatelessWidget {
               }).toList(),
               isExpanded: true,
               underline: SizedBox(),
-              hint: Text(
-                selectedItem != null
-                    ? '$hint: $selectedItem'
-                    : 'Choose $hint',
-                style: TextStyle(
-                    color:  MyColors().mainColor,fontSize: Dimensions.getWidth(4)),
+              icon: Icon(Icons.keyboard_arrow_down,color: Uti().mainColor,),
+              hint: Center(
+                child: Text(
+                  selectedItem != null
+                      ? '$hint: $selectedItem'
+                      : 'Choose $hint',
+                  style: TextStyle(
+                      color:  Uti().mainColor,fontSize: Dimensions.getWidth(4)),
+                ),
               ),
               onChanged: onChange),
         ),
@@ -87,7 +92,7 @@ class DropDownCityList extends StatelessWidget {
                     ? '$hint: ${selectedItem.name}'
                     : 'Choose $hint',
                 style: TextStyle(
-                    color:  MyColors().mainColor,fontSize: Dimensions.getWidth(4)),
+                    color:  Uti().mainColor,fontSize: Dimensions.getWidth(4)),
               ),
               onChanged: onChange),
         ),
@@ -134,7 +139,7 @@ class DropDownTrainList extends StatelessWidget {
                     ? 'Train: ${selectedItem.name}'
                     : 'Choose Train',
                 style: TextStyle(
-                    color:  MyColors().mainColor,fontSize: Dimensions.getWidth(4)),
+                    color:  Uti().mainColor,fontSize: Dimensions.getWidth(4)),
               ),
               onChanged: onChange),
         ),

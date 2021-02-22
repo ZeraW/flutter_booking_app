@@ -20,7 +20,7 @@ class ManageTripsScreen extends StatelessWidget {
       appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          backgroundColor: MyColors().pinkColor,
+          backgroundColor: Uti().pinkColor,
           title: Text(
             'Manage Trips',
             style: TextStyle(
@@ -59,7 +59,7 @@ class ManageTripsScreen extends StatelessWidget {
             _increment(
                 context: context, cityList: mCityList, trainList: mTrainList),
         tooltip: 'Increment',
-        backgroundColor: MyColors().mainColor.withOpacity(0.9),
+        backgroundColor: Uti().mainColor.withOpacity(0.9),
         child: Icon(
           Icons.add,
         ),
@@ -105,7 +105,7 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
   String priceOfA ;
   String priceOfB ;
   String stops ;
-  List<String> keyWords=[];
+  Map<String,String> keyWords={};
   String _sourceError = "";
   String _destinationError = "";
   String _trainError = "";
@@ -144,7 +144,7 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
       appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          backgroundColor: MyColors().pinkColor,
+          backgroundColor: Uti().pinkColor,
           title: Text(
             widget.editTrip == null ? 'Add New Trip' : 'Edit Trip',
             style: TextStyle(
@@ -264,7 +264,7 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
                 keyType: TextInputType.number,
                 controller: _priceOfClassAController,
                 errorText: _priceAError,
-                activeBorderColor: MyColors().mainColor,
+                activeBorderColor: Uti().mainColor,
               ),
               SizedBox(
                 height: Dimensions.getHeight(2.0),
@@ -274,7 +274,7 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
                 keyType: TextInputType.number,
                 controller: _priceOfClassBController,
                 errorText: _priceBError,
-                activeBorderColor: MyColors().mainColor,
+                activeBorderColor: Uti().mainColor,
               ),
               SizedBox(
                 height: Dimensions.getHeight(2.0),
@@ -285,7 +285,7 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
                   onPressed: () {
                     _apiRequest();
                   },
-                  color: MyColors().mainColor,
+                  color: Uti().mainColor,
                   child: Text(
                     widget.editTrip == null ? 'Add Trip' : 'Edit Trip',
                     style: TextStyle(
@@ -305,13 +305,13 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
   void getStopsBetweenTwoCities(
       {CityModel source, CityModel destination, List<CityModel> citiesList}) {
     stopsList = [];
-    for (int i = 0; i < citiesList.length; i++) {
+    for (int i = 0; i < citiesList.length+1; i++) {
       if (int.parse(source.id) <= int.parse(destination.id)) {
         _noOfStopsController.text =
             (int.parse(destination.id) - int.parse(source.id) - 1).toString();
 
 
-        if (i > int.parse(source.id) && i < int.parse(destination.id)) {
+        if (i >= int.parse(source.id) && i <= int.parse(destination.id)) {
           stopsList.add(citiesList[i - 1]);
         }
       } else {
@@ -319,7 +319,7 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
           _noOfStopsController.text =
               (int.parse(source.id) - int.parse(destination.id) - 1).toString();
 
-          if (i > int.parse(destination.id) && i < int.parse(source.id)) {
+          if (i >= int.parse(destination.id) && i <= int.parse(source.id)) {
             stopsList.add(citiesList[i - 1]);
           }
         }
@@ -381,18 +381,20 @@ class _AddEditTripScreenState extends State<AddEditTripScreen> {
 
   void createSearchKeywordsList(){
     keyWords.clear();
-    keyWords.add('city:${sourceCity.id.toString()}');
-    keyWords.add('city:${destinationCity.id.toString()}');
+    keyWords['cityfrom']=sourceCity.id.toString();
+    keyWords['cityto']=destinationCity.id.toString();
+    keyWords['trainType']=selectedTrain.trainType;
+    keyWords['trainId']=selectedTrain.id;
+    keyWords['priceA']=priceOfA;
+    keyWords['priceB']=priceOfB;
+    keyWords['date']=dateFrom.substring(0, 10);
+
     if(selectedTrain.trainType=='Express'){
       for(int i=0 ; i<stopsList.length; i++){
-        keyWords.add('city:${stopsList[i].id.toString()}');
+        keyWords['city${stopsList[i].id.toString()}']='true';
       }
     }
-    keyWords.add('date:${dateFrom.substring(0, 10)}');
-    keyWords.add('priceA:$priceOfA');
-    keyWords.add('priceB:$priceOfB');
-    keyWords.add('trainId:${selectedTrain.id}');
-    keyWords.add('trainType:${selectedTrain.trainType}');
+
 
     print(keyWords.toString());
   }

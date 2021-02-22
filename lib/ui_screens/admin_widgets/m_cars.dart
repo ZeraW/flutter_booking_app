@@ -17,7 +17,7 @@ class ManageCarsScreen extends StatelessWidget {
       appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          backgroundColor: MyColors().pinkColor,
+          backgroundColor: Uti().pinkColor,
           title: Text(
             'Manage Cars',
             style: TextStyle(
@@ -53,7 +53,7 @@ class ManageCarsScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _increment(context),
         tooltip: 'Increment',
-        backgroundColor: MyColors().mainColor.withOpacity(0.9),
+        backgroundColor: Uti().mainColor.withOpacity(0.9),
         child: Icon(
           Icons.add,
         ),
@@ -97,7 +97,7 @@ class _AddEditCarScreenState extends State<AddEditCarScreen> {
       appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          backgroundColor: MyColors().pinkColor,
+          backgroundColor: Uti().pinkColor,
           title: Text(
             widget.editCar == null ? 'Add New Car' : 'Edit Car',
             style: TextStyle(
@@ -132,7 +132,7 @@ class _AddEditCarScreenState extends State<AddEditCarScreen> {
               keyType: TextInputType.number,
               controller: _capacityController,
               errorText: _capacityError,
-              activeBorderColor: MyColors().mainColor,
+              activeBorderColor: Uti().mainColor,
 
             ),
             SizedBox(
@@ -144,7 +144,7 @@ class _AddEditCarScreenState extends State<AddEditCarScreen> {
                 onPressed: () {
                   _apiRequest();
                 },
-                color: MyColors().mainColor,
+                color: Uti().mainColor,
                 child: Text(
                   widget.editCar == null ? 'Add Car' : 'Edit Car',
                   style: TextStyle(

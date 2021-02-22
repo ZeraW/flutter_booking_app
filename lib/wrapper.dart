@@ -5,10 +5,12 @@ import 'package:flutter_booking_app/server/auth_manage.dart';
 import 'package:flutter_booking_app/server/database_api.dart';
 import 'package:flutter_booking_app/ui_screens/choose_login_type.dart';
 import 'package:provider/provider.dart';
+import 'models/db_model.dart';
 import 'ui_screens/home.dart';
 
 class Wrapper extends StatefulWidget {
   static String UID = '';
+
   @override
   _WrapperState createState() => _WrapperState();
 }
@@ -23,12 +25,12 @@ class _WrapperState extends State<Wrapper> {
           create: (context) => AuthManage(), child: RootScreen());
     } else {
       Wrapper.UID = user.uid;
-      return StreamProvider<DocumentSnapshot>.value(
-          value: DatabaseService().getUserById,
-          child: HomeScreen());
+      return MultiProvider(providers: [
+        StreamProvider<List<CityModel>>.value(
+            value: DatabaseService().getLiveCities),
+        StreamProvider<DocumentSnapshot>.value(
+            value: DatabaseService().getUserById)
+      ], child: HomeScreen());
     }
   }
 }
-
-
-

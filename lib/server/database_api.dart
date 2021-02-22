@@ -17,9 +17,11 @@ class DatabaseService {
   final CollectionReference carsCollection =
       FirebaseFirestore.instance.collection('Cars');
   final CollectionReference citiesCollection =
-  FirebaseFirestore.instance.collection('Cities');
+      FirebaseFirestore.instance.collection('Cities');
   final CollectionReference tripCollection =
-  FirebaseFirestore.instance.collection('Trips');
+      FirebaseFirestore.instance.collection('Trips');
+  CollectionReference queryTripRef =
+      FirebaseFirestore.instance.collection('Trips');
 
 /////////////////////////////////// User ///////////////////////////////////
   //get my user
@@ -131,7 +133,9 @@ class DatabaseService {
 
   //update existing car
   Future updateCity({CityModel updatedCity}) async {
-    return await citiesCollection.doc(updatedCity.id.toString()).update(updatedCity.toJson());
+    return await citiesCollection
+        .doc(updatedCity.id.toString())
+        .update(updatedCity.toJson());
   }
 
   //delete existing car
@@ -168,8 +172,17 @@ class DatabaseService {
 
   // stream for live cars
   Stream<List<TripModel>> get getLiveTrips {
-    return tripCollection.snapshots().map(TripModel().fromQuery);
+    return tripCollection
+        .snapshots()
+        .map(TripModel().fromQuery);
   }
+
+  // query for live trips
+  Stream<List<TripModel>>  queryLiveTrips(Query ref) {
+    return ref.snapshots().map(TripModel().fromQuery);
+  }
+
+
 
   /////////////////////////////////// Trips ///////////////////////////////////
   /// ////////////////////////////// utils ///////////////////////////////////
@@ -187,40 +200,15 @@ class DatabaseService {
     return await userCollection.doc(uid).update({'logo': 'value'});
   }
 
-
   ///add item to array
- /* return await carsCollection.doc(updatedCar.id).update({
+/* return await carsCollection.doc(updatedCar.id).update({
   'upvoters': FieldValue.arrayUnion(['12345'])
   });*/
- ///remove item from array
- /* return await carsCollection.doc(updatedCar.id).update({
+
+  ///remove item from array
+/* return await carsCollection.doc(updatedCar.id).update({
   'user_fav': FieldValue.arrayRemove(['12345'])
   });*/
 
   /// ///////////////////////////// utils ///////////////////////////////////
 }
-/*
-//post fluff <Message>
-Future<void> postFluff({String roomId,Fluff fluff,String hisId}) async {
-
-  final newFluff = chatCollection
-      .document(roomId)
-      .collection('chat')
-      .document();
-
-  await newFluff.setData(fluff.toJson()).then((doc) async{
-    print('hop ${newFluff.documentID}');
-
-    //update the chat room
-    await chatCollection.document(roomId).updateData({'lastChat':newFluff.documentID });
-    //update mySide
-    await userCollection.document(Wrapper.UID).collection('friends').document(hisId).updateData({'lastChat':fluff.time });
-    //update hisSide
-    await userCollection.document(hisId).collection('friends').document(Wrapper.UID).updateData({'lastChat':fluff.time });
-
-
-  }).catchError((error) {
-    print(error);
-  });
-
-}*/

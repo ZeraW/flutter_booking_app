@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
             centerTitle: true,
             elevation: 0.0,
             automaticallyImplyLeading: false,
-            backgroundColor: MyColors().pinkColor,
+            backgroundColor: Uti().pinkColor,
             title: Text(
               _pageName,
               style: TextStyle(
@@ -77,8 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  MyColors().pinkColor,
-                  MyColors().accentColor,
+                  Uti().pinkColor,
+                  Uti().accentColor,
                 ],
                 stops: [0.1, 1],
                 begin: Alignment.topCenter,
@@ -98,8 +98,8 @@ class _HomeScreenState extends State<HomeScreen> {
             unselectedItemColor: Colors.grey,
             currentIndex: _currentIndex,
             elevation: 0.0,
-            selectedItemColor: MyColors().white,
-            backgroundColor: MyColors().accentColor,
+            selectedItemColor: Uti().white,
+            backgroundColor: Uti().accentColor,
           ),
         );
   }

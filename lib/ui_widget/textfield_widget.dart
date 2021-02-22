@@ -7,11 +7,19 @@ import 'error_widget.dart';
 class TextFormBuilder extends StatelessWidget {
   final String hint;
   final TextInputType keyType;
-  final bool isPassword;
+  final bool isPassword,enabled;
   final TextEditingController controller;
   final String errorText;
   final Color activeBorderColor;
-  TextFormBuilder({this.hint, this.keyType, this.isPassword, this.controller,this.errorText,this.activeBorderColor});
+
+  TextFormBuilder(
+      {this.hint,
+      this.keyType,
+      this.isPassword,
+      this.controller,
+      this.errorText,
+        this.enabled =true,
+      this.activeBorderColor});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +27,7 @@ class TextFormBuilder extends StatelessWidget {
       children: [
         TextFormField(
 
-          // maxLength: maxLength,
+            // maxLength: maxLength,
             controller: controller,
             validator: (value) {
               if (value.isEmpty) {
@@ -27,7 +35,7 @@ class TextFormBuilder extends StatelessWidget {
               }
               return null;
             },
-            enabled: true,
+            enabled: enabled,
             //controller: _controller,
             maxLines: 1,
 
@@ -36,10 +44,13 @@ class TextFormBuilder extends StatelessWidget {
             obscureText: isPassword != null ? isPassword : false,
             decoration: InputDecoration(
               labelText: '$hint',
-              labelStyle: TextStyle(color: activeBorderColor ??Colors.white, fontSize: Dimensions.getWidth(3.5)),
+              labelStyle: TextStyle(
+                  color: activeBorderColor ?? Colors.white,
+                  fontSize: Dimensions.getWidth(3.5)),
               hintText: "$hint",
               hintStyle: TextStyle(
-                  color: activeBorderColor ??Colors.white, fontSize: Dimensions.getWidth(3.5)),
+                  color: activeBorderColor ?? Colors.white,
+                  fontSize: Dimensions.getWidth(3.5)),
               contentPadding: new EdgeInsets.symmetric(
                   vertical: Dimensions.getHeight(1.0),
                   horizontal: Dimensions.getWidth(4.0)),
@@ -50,22 +61,27 @@ class TextFormBuilder extends StatelessWidget {
                   color: Theme.of(context).accentColor,
                   fontWeight: FontWeight.w500),
               focusedBorder: new OutlineInputBorder(
-                borderSide: BorderSide(width: 1, color: activeBorderColor ??Colors.white),
+                borderSide: BorderSide(
+                    width: 1, color: activeBorderColor ?? Colors.white),
               ),
               errorBorder: new OutlineInputBorder(
                 borderSide:
-                BorderSide(width: 1, color: Theme.of(context).accentColor),
+                    BorderSide(width: 1, color: Theme.of(context).accentColor),
               ),
               enabledBorder: new OutlineInputBorder(
                 borderSide: BorderSide(
                     width: 1, color: Colors.black54, style: BorderStyle.solid),
               ),
+              disabledBorder: new OutlineInputBorder(
+                borderSide: BorderSide(
+                    width: 1, color: Colors.black54, style: BorderStyle.solid),
+              ),
               fillColor: Colors.white,
             )),
-        errorText != null ? GetErrorWidget(
-            isValid: errorText != "", errorText: errorText) : SizedBox()
+        errorText != null
+            ? GetErrorWidget(isValid: errorText != "", errorText: errorText)
+            : SizedBox()
       ],
     );
   }
-
 }

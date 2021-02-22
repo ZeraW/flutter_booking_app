@@ -196,7 +196,7 @@ class TripModel {
   final String trainId;
   final int priceOfClassA, priceOfClassB;
   final List<CityModel> stops;
-  final List<String> keyWords;
+  final Map<String ,String> keyWords;
 
   TripModel(
       {this.id,
@@ -226,7 +226,7 @@ class TripModel {
           stops: List.from(doc.get('stops'))
                   .map((data) => CityModel.fromJson(data))
                   .toList() ?? [],
-          keyWords: List.from(doc.get('keyWords')) ?? []);
+          keyWords: Map<String,String>.from(doc.get('keyWords')));
     }).toList();
   }
 

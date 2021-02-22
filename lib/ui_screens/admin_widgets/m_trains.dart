@@ -17,7 +17,7 @@ class ManageTrainsScreen extends StatelessWidget {
       appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          backgroundColor: MyColors().pinkColor,
+          backgroundColor: Uti().pinkColor,
           title: Text(
             'Manage Trains',
             style: TextStyle(
@@ -54,7 +54,7 @@ class ManageTrainsScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _increment(context),
         tooltip: 'Increment',
-        backgroundColor: MyColors().mainColor.withOpacity(0.9),
+        backgroundColor: Uti().mainColor.withOpacity(0.9),
         child: Icon(
           Icons.add,
         ),
@@ -106,7 +106,7 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
       appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          backgroundColor: MyColors().pinkColor,
+          backgroundColor: Uti().pinkColor,
           title: Text(
             widget.editTrain == null ? 'Add New Car' : 'Edit Car',
             style: TextStyle(
@@ -127,7 +127,7 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
                 hint: "Train Name",
                 controller: _trainIdController,
                 errorText: _trainIdError,
-                activeBorderColor: MyColors().mainColor,
+                activeBorderColor: Uti().mainColor,
 
               ),
               SizedBox(
@@ -152,7 +152,7 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
                 keyType: TextInputType.number,
                 controller: _classAnumController,
                 errorText: _classAnumError,
-                activeBorderColor: MyColors().mainColor,
+                activeBorderColor: Uti().mainColor,
               ),
               SizedBox(
                 height: Dimensions.getHeight(3.0),
@@ -162,7 +162,7 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
                 keyType: TextInputType.number,
                 controller: _classBnumController,
                 errorText: _classBnumError,
-                activeBorderColor: MyColors().mainColor,
+                activeBorderColor: Uti().mainColor,
 
               ),
               SizedBox(
@@ -174,7 +174,7 @@ class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
                   onPressed: () {
                     _apiRequest();
                   },
-                  color: MyColors().mainColor,
+                  color: Uti().mainColor,
                   child: Text(
                     widget.editTrain == null ? 'Add Train' : 'Edit Train',
                     style: TextStyle(

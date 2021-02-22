@@ -18,7 +18,7 @@ class ManageCitiesScreen extends StatelessWidget {
       appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          backgroundColor: MyColors().pinkColor,
+          backgroundColor: Uti().pinkColor,
           title: Text(
             'Manage Cities',
             style: TextStyle(
@@ -50,7 +50,7 @@ class ManageCitiesScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _increment(context: context,nextId: mList!=null ? mList.length+1:0),
         tooltip: 'Increment',
-        backgroundColor: MyColors().mainColor.withOpacity(0.9),
+        backgroundColor: Uti().mainColor.withOpacity(0.9),
         child: Icon(
           Icons.add,
         ),
@@ -91,7 +91,7 @@ class _AddEditCitiescreenState extends State<AddEditCitiescreen> {
       appBar: AppBar(
           centerTitle: true,
           elevation: 0.0,
-          backgroundColor: MyColors().pinkColor,
+          backgroundColor: Uti().pinkColor,
           title: Text(
             widget.editCity == null ? 'Add New City' : 'Edit City',
             style: TextStyle(
@@ -113,7 +113,7 @@ class _AddEditCitiescreenState extends State<AddEditCitiescreen> {
               keyType: TextInputType.number,
               controller: _cityNameController,
               errorText: _cityNameError,
-              activeBorderColor: MyColors().mainColor,
+              activeBorderColor: Uti().mainColor,
 
             ),
             SizedBox(
@@ -125,7 +125,7 @@ class _AddEditCitiescreenState extends State<AddEditCitiescreen> {
                 onPressed: () {
                   _apiRequest();
                 },
-                color: MyColors().mainColor,
+                color: Uti().mainColor,
                 child: Text(
                   widget.editCity == null ? 'Add City' : 'Edit City',
                   style: TextStyle(

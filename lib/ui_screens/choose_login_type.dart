@@ -35,8 +35,8 @@ class ChooseLoginType extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            MyColors().pinkColor,
-            MyColors().accentColor,
+            Uti().pinkColor,
+            Uti().accentColor,
           ],
           stops: [0.1, 1],
           begin: Alignment.topCenter,
@@ -68,7 +68,7 @@ class ChooseLoginType extends StatelessWidget {
           Container(
             //rounded corner + color
             decoration: BoxDecoration(
-                color: MyColors().btnColor.withOpacity(0.2),
+                color: Uti().btnColor.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(Dimensions.getWidth(7))),
             //margin
             margin: EdgeInsets.symmetric(horizontal: Dimensions.isPortrait() ?Dimensions.getWidth(4):Dimensions.getWidth(80)),
@@ -113,7 +113,7 @@ class ChooseLoginType extends StatelessWidget {
                           child: Container(
                             height: Dimensions.getWidth(20),
                             width: Dimensions.getWidth(20),
-                            color: MyColors().accentColor,
+                            color: Uti().accentColor,
                             child: Image.asset(
                               'assets/images/user.jpeg',
                               fit: BoxFit.fitHeight,
@@ -154,7 +154,7 @@ class ChooseLoginType extends StatelessWidget {
                             child: Container(
                               height: Dimensions.getWidth(20),
                               width: Dimensions.getWidth(20),
-                              color: MyColors().accentColor,
+                              color: Uti().accentColor,
                               child: Image.asset(
                                 'assets/images/admin.jpeg',
                                 fit: BoxFit.fitHeight,
