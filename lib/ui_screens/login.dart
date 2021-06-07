@@ -18,10 +18,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController _phoneController = new TextEditingController();
+  TextEditingController _mailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
 
-  String _phoneError = "";
+  String _emailError = "";
   String _passwordError = "";
 
   @override
@@ -62,10 +62,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: Dimensions.getHeight(12.0),
               ),
               TextFormBuilder(
-                controller: _phoneController,
-                hint: "Phone Number :",
-                keyType: TextInputType.phone,
-                errorText: _phoneError,
+                controller: _mailController,
+                hint: "Email :",
+                keyType: TextInputType.emailAddress,
+                errorText: _emailError,
               ),
               SizedBox(
                 height: Dimensions.getHeight(3.0),
@@ -123,29 +123,29 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   _login(BuildContext context) async {
-    String phone =
-        _phoneController.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+    String email =
+        _mailController.text;
     String password = _passwordController.text;
-    if (phone != null &&
-        phone.isNotEmpty &&
+    if (email != null &&
+        email.isNotEmpty &&
         password != null &&
         password.isNotEmpty) {
       setState(() {
         _passwordError ='';
-        _phoneError ='';
+        _emailError ='';
       });
       await AuthService().signInWithEmailAndPassword(
           context: context,
-          email: '${_phoneController.text}@${widget.type}.com',
+          email: '${_mailController.text}.${widget.type}',
           password: _passwordController.text);
     } else {
       setState(() {
-        if(phone == null || phone.isEmpty){
-          _phoneError = "Enter a valid phone number.";
+        if(email == null || email.isEmpty){
+          _emailError = "Enter a valid email";
           _passwordError ='';
         }else {
           _passwordError = "Enter a valid password.";
-          _phoneError ='';
+          _emailError ='';
         }
       });
     }

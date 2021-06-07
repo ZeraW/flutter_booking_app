@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_booking_app/models/db_model.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
 import 'package:flutter_booking_app/utils/utils.dart';
+import 'package:flutter_booking_app/wrapper.dart';
 import 'package:provider/provider.dart';
-
 import 'home_widgets/admin_screen.dart';
 import 'home_widgets/profile_screen.dart';
 import 'home_widgets/search_screen.dart';
@@ -18,46 +18,66 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  String _pageName = 'Search';
-  final List<Map<String, Widget>> _children = [
+  String _pageName = 'Otoraty';
+  final List<Map<String, Widget>> _childrenAdmin = [
+    {'Admin Panel': AdminScreen()},
+    {'Time Table': TimeTableScreen()},
+    {'My Profile': ProfileScreen()},
+
+  ];
+
+  final List<Map<String, Widget>> _childrenUser = [
     {'Search': SearchScreen()},
     {'Time Table': TimeTableScreen()},
     {'My Profile': ProfileScreen()},
     {'My Tickets': MyTicketScreen()},
   ];
 
-
+  UserModel user;
 
   @override
   Widget build(BuildContext context) {
     DocumentSnapshot snapshot = Provider.of<DocumentSnapshot>(context);
-
-
-
-    final List<BottomNavigationBarItem> _bottomNavigation = [
+    final List<BottomNavigationBarItem> _bottomNavigationUser = [
       BottomNavigationBarItem(
-          icon: Icon(Icons.search), label: _children[0].keys.first),
+          icon: Icon(Icons.search), label: _childrenUser[0].keys.first),
       BottomNavigationBarItem(
           icon: Icon(Icons.calendar_today),
-          label: _children[1].keys.first),
+          label: _childrenUser[1].keys.first),
       BottomNavigationBarItem(
-          icon: Icon(Icons.person_pin), label: _children[2].keys.first),
+          icon: Icon(Icons.person_pin), label: _childrenUser[2].keys.first),
       BottomNavigationBarItem(
           icon: Icon(Icons.notifications_none),
-          label: _children[3].keys.first),
+          label: _childrenUser[3].keys.first),
+    ];
+
+    final List<BottomNavigationBarItem> _bottomNavigationAdmin = [
+      BottomNavigationBarItem(
+          icon: Icon(Icons.whatshot), label: _childrenAdmin[0].keys.first),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.calendar_today),
+          label: _childrenAdmin[1].keys.first),
+      BottomNavigationBarItem(
+          icon: Icon(Icons.person_pin), label: _childrenAdmin[2].keys.first),
+
     ];
 
 
     if(snapshot!=null){
-      UserModel user =UserModel.fromJson(snapshot.data());
+       user=UserModel.fromJson(snapshot.data());
+      Wrapper.UNAME = '${user.firstName} ${user.lastName}';
+      if(user!=null && user.type=='admin' && _currentIndex ==0){
+        _pageName = 'Admin Panel';
+        setState(() {
 
-      if(user!=null && user.type=='admin'){
-        _children.add({'Admin Panel': AdminScreen()});
-        _bottomNavigation.add(BottomNavigationBarItem(
-            icon: Icon(Icons.whatshot), label: _children[4].keys.first));
+        });
+      }else if(user!=null && user.type=='user'&& _currentIndex ==0){
+        _pageName = 'Search';
+        setState(() {
+
+        });
       }
     }
-
 
     return Scaffold(
         appBar: new AppBar(
@@ -68,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
             title: Text(
               _pageName,
               style: TextStyle(
-                  color: Colors.white,
+                  color: Uti().mainColor,
                   fontWeight: FontWeight.bold,
                   fontSize: Dimensions.getWidth(5)),
             )),
@@ -85,13 +105,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 end: Alignment.bottomCenter,
               ),
             ),
-            child: _children[_currentIndex].values.first):SizedBox(),
+            child: user!=null && user.type=='admin' ?_childrenAdmin[_currentIndex].values.first :_childrenUser[_currentIndex].values.first
+
+        )
+
+            :SizedBox(),
         bottomNavigationBar:  BottomNavigationBar(
-            items: _bottomNavigation,
+            items: user!=null && user.type=='admin' ?_bottomNavigationAdmin:_bottomNavigationUser,
             onTap: (index) {
               setState(() {
                 _currentIndex = index;
-                _pageName = _children[index].keys.first;
+                _pageName = user!=null && user.type=='admin' ? _childrenAdmin[index].keys.first : _childrenUser[index].keys.first;
               });
             },
             type: BottomNavigationBarType.fixed,
@@ -104,131 +128,3 @@ class _HomeScreenState extends State<HomeScreen> {
         );
   }
 }
-
-/*class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title='home'}) : super(key: key);
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  List<Ticket> ticketList;
-
-  void _addNewTicket() {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (_) => AddNewTicket(getTicketList)));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getTicketList();
-  }
-
-  void getTicketList() async {
-    ticketList = await SharedPref().getTickets();
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Dimensions.callAtBuild(context: context);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Padding(
-        padding: EdgeInsets.only(top: 10),
-        child: Column(
-          children: [
-            ticketList != null
-                ? Table(
-                    defaultColumnWidth: FlexColumnWidth(1.0),
-                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                    border: TableBorder.all(),
-                    children: ticketList
-                        .map((item) => TableRow(children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  '${item.name}',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontWeight: item.id == 0
-                                          ? FontWeight.w600
-                                          : FontWeight.w400),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  '${item.from}',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontWeight: item.id == 0
-                                          ? FontWeight.w600
-                                          : FontWeight.w400),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  '${item.to}',
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontWeight: item.id == 0
-                                          ? FontWeight.w600
-                                          : FontWeight.w400),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: item.id == 0
-                                    ? Center(
-                                      child: Text(
-                                          'Action',
-                                          style: TextStyle(
-                                              fontWeight: item.id == 0
-                                                  ? FontWeight.w600
-                                                  : FontWeight.w400),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                    )
-                                    : GestureDetector(
-                                        onTap: () async {
-                                          ticketList.removeWhere((element) =>
-                                              element.id == item.id);
-                                          await SharedPref()
-                                              .saveTicket(list: ticketList);
-
-                                          setState(() {});
-                                        },
-                                        child: Icon(
-                                          Icons.delete_forever,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                              ),
-                            ]))
-                        .toList()
-                        .cast<TableRow>(),
-                  )
-                : Text(''),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addNewTicket,
-        tooltip: 'addTicket',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}*/

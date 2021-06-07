@@ -104,6 +104,111 @@ class DropDownCityList extends StatelessWidget {
   }
 }
 
+class DropDownClassList extends StatelessWidget {
+  final ClassModel selectedItem;
+  final List<ClassModel> mList;
+  final Function onChange;
+  final String hint;
+  final String errorText;
+  final bool enableBorder;
+
+  DropDownClassList(
+      {this.selectedItem, this.mList,this.hint, this.onChange, this.errorText,this.enableBorder=false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: double.maxFinite,
+          height: enableBorder ?Dimensions.getHeight(4):null,
+
+          padding: enableBorder ?null:EdgeInsets.symmetric(horizontal: Dimensions.getWidth(2)),
+          decoration: BoxDecoration(
+            border: enableBorder ?null:Border.all(color: Colors.black54, style: BorderStyle.solid),
+            borderRadius: enableBorder ?null:BorderRadius.circular(4),
+          ),
+          child: new DropdownButton<ClassModel>(
+              items: mList.map((ClassModel value) {
+                return new DropdownMenuItem<ClassModel>(
+                  value: value,
+                  child: new Text('${value.className}'),
+                );
+              }).toList(),
+              isExpanded: true,
+              underline: SizedBox(),
+              icon: Icon(Icons.keyboard_arrow_down,color: Uti().mainColor,),
+
+              hint: Align(
+                alignment: enableBorder ?Alignment.center:Alignment.centerLeft,
+                child: Text(
+                  selectedItem != null
+                      ? '$hint: ${selectedItem.className}'
+                      : 'Choose $hint',
+                  style: TextStyle(
+                      color:  Uti().mainColor,fontSize: Dimensions.getWidth(4)),
+                ),
+              ),
+              onChanged: onChange),
+        ),
+        errorText != null
+            ? GetErrorWidget(isValid: errorText != "", errorText: errorText)
+            : SizedBox()
+      ],
+    );
+  }
+}
+
+
+class DropDownCarList extends StatelessWidget {
+  final CarModel selectedItem;
+  final List<CarModel> mList;
+  final Function onChange;
+  final String hint;
+  final String errorText;
+
+  DropDownCarList(
+      {this.selectedItem, this.mList,this.hint, this.onChange, this.errorText});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: double.maxFinite,
+          padding: EdgeInsets.symmetric(horizontal: Dimensions.getWidth(2)),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black54, style: BorderStyle.solid),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: new DropdownButton<CarModel>(
+              items: mList.map((CarModel value) {
+                return new DropdownMenuItem<CarModel>(
+                  value: value,
+                  child: new Text('${value.id}'),
+                );
+              }).toList(),
+              isExpanded: true,
+              underline: SizedBox(),
+              hint: Text(
+                selectedItem != null
+                    ? '${selectedItem.id}'
+                    : 'Choose $hint',
+                style: TextStyle(
+                    color:  Uti().mainColor,fontSize: Dimensions.getWidth(4)),
+              ),
+              onChanged: onChange),
+        ),
+        errorText != null
+            ? GetErrorWidget(isValid: errorText != "", errorText: errorText)
+            : SizedBox()
+      ],
+    );
+  }
+}
+
 class DropDownTrainList extends StatelessWidget {
   final TrainModel selectedItem;
   final List<TrainModel> mList;
@@ -129,14 +234,14 @@ class DropDownTrainList extends StatelessWidget {
               items: mList.map((TrainModel value) {
                 return new DropdownMenuItem<TrainModel>(
                   value: value,
-                  child: new Text('${value.name}'),
+                  child: new Text('${value.id}'),
                 );
               }).toList(),
               isExpanded: true,
               underline: SizedBox(),
               hint: Text(
                 selectedItem != null
-                    ? 'Train: ${selectedItem.name}'
+                    ? 'Train: ${selectedItem.id}'
                     : 'Choose Train',
                 style: TextStyle(
                     color:  Uti().mainColor,fontSize: Dimensions.getWidth(4)),

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_booking_app/ui_screens/splash.dart';
+import 'package:flutter_booking_app/utils/utils.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,10 +15,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Booking App',
-      theme: ThemeData(
+      theme: MyTheme().buildLightTheme()/*ThemeData(
         primarySwatch: Colors.pink,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+      )*/,
       home: SplashScreen(),
     );
   }

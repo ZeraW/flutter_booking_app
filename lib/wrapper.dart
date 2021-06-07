@@ -10,6 +10,7 @@ import 'ui_screens/home.dart';
 
 class Wrapper extends StatefulWidget {
   static String UID = '';
+  static String UNAME = '';
 
   @override
   _WrapperState createState() => _WrapperState();
@@ -28,6 +29,8 @@ class _WrapperState extends State<Wrapper> {
       return MultiProvider(providers: [
         StreamProvider<List<CityModel>>.value(
             value: DatabaseService().getLiveCities),
+        StreamProvider<List<ClassModel>>.value(
+            value: DatabaseService().getLiveClass),
         StreamProvider<DocumentSnapshot>.value(
             value: DatabaseService().getUserById)
       ], child: HomeScreen());

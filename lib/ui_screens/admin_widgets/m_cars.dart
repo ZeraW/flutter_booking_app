@@ -12,6 +12,7 @@ class ManageCarsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<CarModel> mList = Provider.of<List<CarModel>>(context);
+    List<ClassModel> mClassList = Provider.of<List<ClassModel>>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -21,29 +22,33 @@ class ManageCarsScreen extends StatelessWidget {
           title: Text(
             'Manage Cars',
             style: TextStyle(
-                color: Colors.white,
+                color: Uti().mainColor,
                 fontWeight: FontWeight.bold,
                 fontSize: Dimensions.getWidth(5)),
           )),
-      body: mList != null
+      body: mList != null && mClassList != null
           ? ListView.builder(
               padding: EdgeInsets.symmetric(
                   horizontal: Dimensions.getWidth(2),
                   vertical: Dimensions.getHeight(1.5)),
               shrinkWrap: true,
               itemBuilder: (ctx, index) {
+                ClassModel classModel = mClassList.firstWhere((element) => element.id == mList[index].carClass , orElse: () => null);
                 return CarCard(
-                  title: mList[index].carClass,
-                  capacity: mList[index].capacity,
+                  title: mList[index].id,
+                  className: classModel!=null ?classModel.className:'class deleted',
                   delete: () async {
                     await DatabaseService().deleteCar(deleteCar: mList[index]);
                   },
                   edit: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) =>
-                                AddEditCarScreen(editCar: mList[index])));
+                    if (mClassList != null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => AddEditCarScreen(
+                                  editCar: mList[index],
+                                  classList: mClassList)));
+                    }
                   },
                 );
               },
@@ -51,7 +56,7 @@ class ManageCarsScreen extends StatelessWidget {
             )
           : SizedBox(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _increment(context),
+        onPressed: () => _increment(context, mClassList),
         tooltip: 'Increment',
         backgroundColor: Uti().mainColor.withOpacity(0.9),
         child: Icon(
@@ -61,33 +66,45 @@ class ManageCarsScreen extends StatelessWidget {
     );
   }
 
-  void _increment(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (_) => AddEditCarScreen()));
+  void _increment(BuildContext context, var mClassList) {
+    if (mClassList != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (_) => AddEditCarScreen(classList: mClassList)));
+    }
   }
 }
+
 class AddEditCarScreen extends StatefulWidget {
   CarModel editCar;
+  List<ClassModel> classList;
 
-  AddEditCarScreen({this.editCar});
+  AddEditCarScreen({this.editCar, this.classList});
 
   @override
   _AddEditCarScreenState createState() => _AddEditCarScreenState();
 }
-class _AddEditCarScreenState extends State<AddEditCarScreen> {
-  TextEditingController _capacityController = new TextEditingController();
-  String carClass;
-  String _carClassError = "";
 
-  String _capacityError = "";
+class _AddEditCarScreenState extends State<AddEditCarScreen> {
+  TextEditingController _carNumController = new TextEditingController();
+  TextEditingController _seatsNumberController = new TextEditingController();
+
+  String _carClassError = "";
+  String _carNumError = "";
+  String _seatsNumError = "";
+
+  ClassModel selectedClass;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     if (widget.editCar != null) {
-      _capacityController.text = widget.editCar.capacity.toString();
-      carClass = widget.editCar.carClass;
+      _carNumController.text = widget.editCar.id.toString();
+      _seatsNumberController.text = widget.editCar.seats.toString();
+
+      selectedClass = widget.classList
+          .firstWhere((element) => element.id == widget.editCar.carClass, orElse: () => null);
     }
   }
 
@@ -101,7 +118,7 @@ class _AddEditCarScreenState extends State<AddEditCarScreen> {
           title: Text(
             widget.editCar == null ? 'Add New Car' : 'Edit Car',
             style: TextStyle(
-                color: Colors.white,
+                color: Uti().mainColor,
                 fontWeight: FontWeight.bold,
                 fontSize: Dimensions.getWidth(5)),
           )),
@@ -113,27 +130,36 @@ class _AddEditCarScreenState extends State<AddEditCarScreen> {
             SizedBox(
               height: Dimensions.getHeight(3.0),
             ),
-            DropDownStringList(
-              errorText: _carClassError,
-              mList: ['A', 'B'],
-              selectedItem: carClass,
-              hint: 'Class',
-              onChange: (String value) {
-                setState(() {
-                  carClass = value;
-                });
-              },
+            TextFormBuilder(
+              hint: "Car Number",
+              controller: _carNumController,
+              errorText: _carNumError,
+              activeBorderColor: Uti().mainColor,
             ),
             SizedBox(
               height: Dimensions.getHeight(3.0),
             ),
+            widget.classList != null
+                ? DropDownClassList(
+                    mList: widget.classList,
+                    hint: 'Class',
+                    selectedItem: selectedClass,
+                    errorText: _carClassError,
+                    onChange: (ClassModel value) {
+                      setState(() {
+                        selectedClass = value;
+                      });
+                    })
+                : SizedBox(),
+            SizedBox(
+              height: Dimensions.getHeight(3.0),
+            ),
             TextFormBuilder(
-              hint: "Capacity",
+              hint: "Number Of Seats",
               keyType: TextInputType.number,
-              controller: _capacityController,
-              errorText: _capacityError,
+              controller: _seatsNumberController,
+              errorText: _seatsNumError,
               activeBorderColor: Uti().mainColor,
-
             ),
             SizedBox(
               height: Dimensions.getHeight(3.0),
@@ -161,21 +187,36 @@ class _AddEditCarScreenState extends State<AddEditCarScreen> {
   }
 
   void _apiRequest() async {
-    String carCapacity = _capacityController.text;
-    if (carClass == null || carClass.isEmpty) {
+    String carNumber = _carNumController.text;
+    String seatsNumber = _seatsNumberController.text;
+
+    if (carNumber == null || carNumber.isEmpty) {
+      setState(() {
+        _carNumError = "Please enter car Number";
+      });
+    } else if (selectedClass == null) {
+      clear();
       setState(() {
         _carClassError = "Please choose car class";
       });
-    } else if (carCapacity == null || carCapacity.isEmpty) {
+    } else if (seatsNumber == null || seatsNumber.isEmpty) {
       clear();
       setState(() {
-        _capacityError = "Please enter car capacity";
+        _seatsNumError = "Please enter No. of seats";
+      });
+    } else if (int.parse(seatsNumber) > selectedClass.maxCapacity) {
+      clear();
+      setState(() {
+        _seatsNumError = "Max No. of seats is ${selectedClass.maxCapacity}";
       });
     } else {
       clear();
       //do request
       CarModel newCar = CarModel(
-          id: carClass, carClass: carClass, capacity: int.parse(carCapacity));
+        id: widget.editCar != null ? widget.editCar.id : carNumber,
+        seats: int.parse(seatsNumber),
+        carClass: selectedClass.id,
+      );
       widget.editCar == null
           ? await DatabaseService().addCar(newCar: newCar)
           : await DatabaseService().updateCar(updatedCar: newCar);
@@ -186,8 +227,9 @@ class _AddEditCarScreenState extends State<AddEditCarScreen> {
 
   void clear() {
     setState(() {
-      _capacityError = "";
       _carClassError = "";
+      _carClassError = "";
+      _carNumError = "";
     });
   }
 }

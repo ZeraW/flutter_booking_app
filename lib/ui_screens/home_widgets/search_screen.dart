@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_booking_app/models/db_model.dart';
+import 'package:flutter_booking_app/server/search_manage.dart';
 import 'package:flutter_booking_app/ui_screens/search_result.dart';
 import 'package:flutter_booking_app/ui_widget/drop_down.dart';
 import 'package:flutter_booking_app/utils/dimensions.dart';
@@ -13,18 +14,18 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   int sourceOrDestination = 0;
-  String redDotText = 'Destination',
-      greenDotText = 'Source',
-      source,
-      destination,
-      trainType,
-      carClass,
+  String redDotText = 'Destination',greenDotText = 'Source', source,
+      destination, trainType,_classError='',
       date = DateTime.now().toString().substring(0, 10);
   bool foodDrink = false;
+  TextEditingController controller = new TextEditingController();
+  List<CityModel> _searchResult = [];
 
+  ClassModel selectedClass;
   @override
   Widget build(BuildContext context) {
     List<CityModel> mCityList = Provider.of<List<CityModel>>(context);
+    List<ClassModel> mClassList = Provider.of<List<ClassModel>>(context);
 
     return ListView(
       children: [
@@ -46,8 +47,7 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         Column(
           children: [
-            roundedContainer(
-                child: Row(
+            roundedContainer(child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
@@ -82,7 +82,10 @@ class _SearchScreenState extends State<SearchScreen> {
                         greenDotText = textHolder;
                       });
                     },
-                    child: Icon(Icons.person_pin)),
+                    child: Icon(
+                      Icons.swap_vertical_circle,
+                      color: Colors.grey,
+                    )),
               ],
             )),
             GestureDetector(
@@ -107,40 +110,19 @@ class _SearchScreenState extends State<SearchScreen> {
                 });
               },
             )),
-            roundedContainer(
-                child: DropDownStringList(
-              enableBorder: false,
-              mList: ['A', 'B'],
-              selectedItem: carClass,
-              hint: 'Class',
-              onChange: (String value) {
-                setState(() {
-                  carClass = value;
-                });
-              },
-            )),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  foodDrink = !foodDrink;
-                });
-              },
-              child: roundedContainer(
-                  child: SizedBox(
-                height: Dimensions.getHeight(3.5),
-                child: Row(
-                  children: [
-                    Spacer(),
-                    Text('Food & Drinks'),
-                    Spacer(),
-                    Icon(
-                      Icons.check_circle_outline,
-                      color: foodDrink ? Colors.green : Colors.grey,
-                    )
-                  ],
-                ),
-              )),
-            ),
+            mClassList!=null?roundedContainer(
+                child:DropDownClassList(
+                    mList: mClassList,
+                    hint: 'Class',
+                    selectedItem: selectedClass,
+                    enableBorder: true,
+                    errorText: _classError,
+                    onChange: (ClassModel value) {
+                      setState(() {
+                        selectedClass = value;
+                      });
+                    })):SizedBox(),
+
             Container(
               margin: EdgeInsets.only(top: Dimensions.getHeight(2)),
               height: Dimensions.getHeight(7.0),
@@ -186,56 +168,117 @@ class _SearchScreenState extends State<SearchScreen> {
           backgroundColor: Colors.redAccent,
           duration: Toast.LENGTH_LONG,
           gravity: Toast.BOTTOM);
-    }else if (carClass == null) {
+    } else if (selectedClass == null) {
       Toast.show("Please Choose Class", context,
           backgroundColor: Colors.redAccent,
           duration: Toast.LENGTH_LONG,
           gravity: Toast.BOTTOM);
+    }else if (source == null||source.isEmpty) {
+      Toast.show("Please Choose Source", context,
+          backgroundColor: Colors.redAccent,
+          duration: Toast.LENGTH_LONG,
+          gravity: Toast.BOTTOM);
+    }else if (destination == null||destination.isEmpty) {
+      Toast.show("Please Choose Destination", context,
+          backgroundColor: Colors.redAccent,
+          duration: Toast.LENGTH_LONG,
+          gravity: Toast.BOTTOM);
     } else {
+      print('so: ${source}');
+
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (_) => SearchResultScreen(
-                    date: date,
-                    carClass: carClass,
-                    destination: destination,
-                    foodDrink: foodDrink,
-                    source: source,
-                    trainType: trainType,
+              builder: (_) => ChangeNotifierProvider(
+                    create: (context) => SearchManage(
+                      date: date,
+                      carClass: selectedClass,
+                      destination: destination,
+                      foodDrink: foodDrink,
+                      source: source,
+                      trainType: trainType,
+                    ),
+                    child: SearchResultScreen(),
                   )));
     }
   }
 
   void showCityDialog(List<CityModel> mCityList, int type) {
+    onTap(CityModel city){
+      if (type == 0) {
+        greenDotText = city.name;
+        source = city.id.toString();
+      } else {
+        redDotText = city.name;
+        destination = city.id.toString();
+      }
+      setState(() {});
+      Navigator.pop(context);
+    }
+
     showDialog(
-        context: context,
-        child: new AlertDialog(
-          title: new Text("Choose City"),
-          content: Container(
-            height: 300.0, // Change as per your requirement
-            width: 300.0,
-            child: ListView.builder(
-              itemBuilder: (ctx, index) {
-                return ListTile(
-                  title: Text(mCityList[index].name),
-                  onTap: () {
-                    if (type == 0) {
-                      greenDotText = mCityList[index].name;
-                      source = mCityList[index].id;
-                    } else {
-                      redDotText = mCityList[index].name;
-                      destination = mCityList[index].id;
-                    }
-                    setState(() {
-                      Navigator.pop(context);
-                    });
-                  },
-                );
-              },
-              itemCount: mCityList.length,
-            ),
-          ),
-        ));
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+                title: new Text("Choose Station"),
+                content: Container(
+                  height: Dimensions.getHeight(70), // Change as per your requirement
+                  width: 300.0,
+                  child: Column(
+                    children: [
+
+                      Flexible(fit: FlexFit.tight,flex: 3,child: Container(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: ListTile(
+                            leading: Icon(Icons.search),
+                            title: TextField(
+                              controller: controller,
+                              decoration: InputDecoration(
+                                  hintText: 'Search', border: InputBorder.none),
+                              onChanged: (text){
+                                _searchResult.clear();
+                                mCityList.forEach((city) {
+                                  if (city.name.contains(text))
+                                    _searchResult.add(city);
+                                  print(_searchResult.length);
+                                });
+                                setState(() {});
+                              },
+                            ),
+                            trailing: IconButton(icon: Icon(Icons.cancel), onPressed: () {
+
+                              controller.clear();
+                              _searchResult.clear();
+                              setState(() {});
+
+                            },),
+                          ),
+                        ),
+                      )),
+                      Flexible(
+                        flex: 15,
+                        child: ListView.builder(
+                          itemBuilder: (ctx, index) {
+                            CityModel city = _searchResult.isEmpty ?mCityList[index]:_searchResult[index];
+                            return ListTile(
+                              title: Text(city.name),
+                              onTap: ()=>onTap(city),
+                            );
+                          },
+                          itemCount:_searchResult.isEmpty ? mCityList.length : _searchResult.length,
+                        ),
+                      ),
+                    ],
+                  ),
+                ));
+          },
+        );
+      },
+    );
+
   }
 
   Widget roundedContainer({Widget child}) {
@@ -265,9 +308,11 @@ class _SearchScreenState extends State<SearchScreen> {
           Text(
             text,
             style: TextStyle(fontSize: Dimensions.getWidth(4)),
-          )
+          ),
         ],
       ),
     );
   }
 }
+
+

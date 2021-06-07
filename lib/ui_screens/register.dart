@@ -27,10 +27,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController _passwordController = new TextEditingController();
   TextEditingController _repasswordController = new TextEditingController();
   TextEditingController _phoneController = new TextEditingController();
+  TextEditingController _emailController = new TextEditingController();
+  TextEditingController _nationalIdController = new TextEditingController();
 
   String _phoneError = "";
   String _nameError = "";
   String _lastNameError = "";
+  String _emailError = "";
+  String _nationalIdError = "";
+
   String _passError = "";
   String _rePassError = "";
 
@@ -133,10 +138,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 height: Dimensions.getHeight(3.0),
               ),
               TextFormBuilder(
+                hint: "Email",
+                keyType: TextInputType.emailAddress,
+                controller: _emailController,
+                errorText: _emailError,
+              ),
+              SizedBox(
+                height: Dimensions.getHeight(3.0),
+              ),
+
+              TextFormBuilder(
                 hint: "Phone Number",
+                maxLength: 11,
                 keyType: TextInputType.number,
                 controller: _phoneController,
                 errorText: _phoneError,
+              ),
+              SizedBox(
+                height: Dimensions.getHeight(3.0),
+              ),
+
+              TextFormBuilder(
+                hint: "National ID",
+                maxLength: 14,
+                keyType: TextInputType.number,
+                controller: _nationalIdController,
+                errorText: _nationalIdError,
               ),
               SizedBox(
                 height: Dimensions.getHeight(3.0),
@@ -185,6 +212,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   _reg(BuildContext context) async {
     String firstName = _nameController.text;
     String lastName = _lastNameController.text;
+    String mail = _emailController.text;
+    String nationalId = _nationalIdController.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+
     String phone =
         _phoneController.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
     String password = _passwordController.text;
@@ -195,9 +225,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else if (lastName == null || lastName.isEmpty) {
       clear();
       _lastNameError = "Please enter last name";
-    } else if (phone == null || phone.isEmpty) {
+    }else if (mail == null || mail.isEmpty) {
+      clear();
+      _emailError = "Please enter email Address";
+      setState(() {
+
+      });
+    }else if(!isEmail(mail)){
+      clear();
+      _emailError = "Please enter Correct email Address";
+      setState(() {
+
+      });
+    }  else if (phone == null || phone.isEmpty) {
       clear();
       _phoneError = "Please enter a valid phone number";
+    }else if (nationalId == null || nationalId.isEmpty) {
+      clear();
+      _nationalIdError = "Please enter National ID";
     } else if (password == null || password.isEmpty) {
       clear();
       _passError = "Please enter password";
@@ -208,17 +253,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
       clear();
       _passError = "Passwords don't matach";
       _rePassError = "Passwords don't matach";
-    }else if(_storedImage==null){
+    }/*else if(_storedImage==null){
       Toast.show("Please Add Image", context,
           backgroundColor: Colors.redAccent,
           duration: Toast.LENGTH_LONG,
           gravity: Toast.BOTTOM);
-    } else {
+    }*/ else {
       clear();
       UserModel newUser = UserModel(
           firstName: firstName,
           lastName: lastName,
           password: password,
+          mail: mail,
+          nationalId: nationalId,
           phone: phone,
           type: widget.type);
       await AuthService().registerWithEmailAndPassword(
@@ -226,6 +273,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
+  bool isEmail(String em) {
+
+    String p = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+    RegExp regExp = new RegExp(p);
+
+    return regExp.hasMatch(em);
+  }
   void clear() {
     setState(() {
       _phoneError = "";

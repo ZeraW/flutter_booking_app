@@ -5,6 +5,7 @@ import 'package:flutter_booking_app/server/database_api.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_booking.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_cars.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_citys.dart';
+import 'package:flutter_booking_app/ui_screens/admin_widgets/m_class.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_trains.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_trips.dart';
 import 'package:flutter_booking_app/ui_widget/home_widgets/admin_widgets/admin_card.dart';
@@ -31,13 +32,22 @@ class _AdminScreenState extends State<AdminScreen> {
               open: StreamProvider<List<TrainModel>>.value(
                   value: DatabaseService().getLiveTrains,
                   child: ManageTrainsScreen())),
+
+          AdminCard(
+              title: 'Manage Class',
+              open: StreamProvider<List<ClassModel>>.value(
+                  value: DatabaseService().getLiveClass,
+                  child: ManageClassScreen())),
           AdminCard(
               title: 'Manage Cars',
-              open: StreamProvider<List<CarModel>>.value(
-                  value: DatabaseService().getLiveCars,
-                  child: ManageCarsScreen())),
+              open: MultiProvider(providers: [
+                StreamProvider<List<CarModel>>.value(
+                    value: DatabaseService().getLiveCars),
+                StreamProvider<List<ClassModel>>.value(
+                    value: DatabaseService().getLiveClass),
+              ], child: ManageCarsScreen())),
           AdminCard(
-              title: 'Manage Cities',
+              title: 'Manage Stations',
               open: StreamProvider<List<CityModel>>.value(
                   value: DatabaseService().getLiveCities,
                   child: ManageCitiesScreen())),
@@ -51,7 +61,14 @@ class _AdminScreenState extends State<AdminScreen> {
                 StreamProvider<List<TripModel>>.value(
                     value: DatabaseService().getLiveTrips),
               ], child: ManageTripsScreen())),
-          AdminCard(title: 'Manage Booking', open: ManageBookingsScreen())
+          AdminCard(title: 'Manage Reservation', open: MultiProvider(providers: [
+            StreamProvider<List<CityModel>>.value(
+                value: DatabaseService().getLiveCities),
+            StreamProvider<List<TrainModel>>.value(
+                value: DatabaseService().getLiveTrains),
+            StreamProvider<List<TripModel>>.value(
+                value: DatabaseService().getLiveTrips),
+          ], child: ManageBookingsScreen()))
         ],
       ),
     );

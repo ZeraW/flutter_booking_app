@@ -10,6 +10,7 @@ class TextFormBuilder extends StatelessWidget {
   final bool isPassword,enabled;
   final TextEditingController controller;
   final String errorText;
+  final int maxLength;
   final Color activeBorderColor;
 
   TextFormBuilder(
@@ -18,6 +19,7 @@ class TextFormBuilder extends StatelessWidget {
       this.isPassword,
       this.controller,
       this.errorText,
+        this.maxLength,
         this.enabled =true,
       this.activeBorderColor});
 
@@ -27,7 +29,7 @@ class TextFormBuilder extends StatelessWidget {
       children: [
         TextFormField(
 
-            // maxLength: maxLength,
+            maxLength: maxLength,
             controller: controller,
             validator: (value) {
               if (value.isEmpty) {

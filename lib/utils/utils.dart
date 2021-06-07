@@ -29,42 +29,41 @@ class MyTheme {
   ThemeData buildLightTheme() {
     final ThemeData base = ThemeData.light();
     return base.copyWith(
-
         textTheme: TextTheme(headline6: TextStyle(
             fontWeight: FontWeight.w200,
             color: Uti().mainColor,),
           headline1: TextStyle(
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color: Uti().mainColor,),
           headline2: TextStyle(
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color: Uti().mainColor,),
           headline3: TextStyle(
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color: Uti().mainColor,),
           headline4: TextStyle(
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color: Uti().mainColor,),
           headline5: TextStyle(
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color: Uti().mainColor,),
           bodyText1: TextStyle(
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color: Uti().textColor,),
           bodyText2: TextStyle(
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color: Uti().textColor,
           ),
           button: TextStyle(
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color:Colors.white,
           ),
           subtitle1: TextStyle(
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color: Uti().textColor,
           ),
           subtitle2: TextStyle(
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color: Uti().textColor,
           ),
 
