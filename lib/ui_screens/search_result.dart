@@ -130,59 +130,61 @@ class _ResultScreenState extends State<ResultScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    mTripList != null && mTripList.isNotEmpty?  ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: Dimensions.getWidth(5),
-                          vertical: Dimensions.getHeight(1.5)),
-                      shrinkWrap: true,
-                      itemBuilder: (ctx, index) {
-                        String source = mCityList.firstWhere((element) => element.id == int.parse(widget.source)).name;
-                        String destination = mCityList.firstWhere((element) => element.id == int.parse(widget.destination)).name;
-                        String price = (mTripList[index].prices.abs()+((int.parse(widget.source) - int.parse(widget.destination)).abs() * widget.carClass.price)).toString();
-                        return UserMoneyTripsCard(
-                          dateFrom: getDepartTime(mTripList[index].dateFrom, mTripList[index].source),
-                          dateTo: getArrivalTime(getDepartTime(mTripList[index].dateFrom, mTripList[index].source)),
-                          price:price,
-                          destination: destination,
-                          source: source,
-                          stops: mTripList[index].keyWords['trainType'] == 'Express'?'Stops : ${(int.parse(widget.source) - int.parse(widget.destination)).abs().toString()}':'',
-                          onTap: () async {
-                            TicketModel newTicket = TicketModel(
-                                date: widget.date,
-                                source: Provider.of<SearchManage>(context,
-                                        listen: false)
-                                    .source,
-                                destination: Provider.of<SearchManage>(context,
-                                        listen: false)
-                                    .destination,
-                                carClass: widget.carClass.id,
-                                userName: Wrapper.UNAME,
-                                trainId:mTripList[index].trainId ,
-                                tripId: mTripList[index].id.toString(),
-                                userId: Wrapper.UID,
-                                price: int.parse(price),
-                                arriveAt: timeFormat.format(
-                                    dateFormat.parse(getArrivalTime(getDepartTime(mTripList[index].dateFrom, mTripList[index].source)))),
-                                departAt: timeFormat.format(dateFormat
-                                    .parse(getDepartTime(mTripList[index].dateFrom, mTripList[index].source))));
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => ChangeNotifierProvider(
-                                        create: (context) => PickSeatManage(
-                                            ticket: newTicket,
-                                            currentTrain: mTrainList.firstWhere(
-                                                (element) =>
-                                                    element.id ==
-                                                    mTripList[index].trainId),
-                                            carList: mCarList,
-                                            currentCarClass: widget.carClass.id,
-                                            tripId: mTripList[index].id),
-                                        child: PickSeatScreen())));
-                          },
-                        );
-                      },
-                      itemCount: mTripList.length,
+                    mTripList != null && mTripList.isNotEmpty?  Expanded(
+                      child: ListView.builder(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Dimensions.getWidth(5),
+                            vertical: Dimensions.getHeight(1.5)),
+                        shrinkWrap: true,
+                        itemBuilder: (ctx, index) {
+                          String source = mCityList.firstWhere((element) => element.id == int.parse(widget.source)).name;
+                          String destination = mCityList.firstWhere((element) => element.id == int.parse(widget.destination)).name;
+                          String price = (mTripList[index].prices.abs()+((int.parse(widget.source) - int.parse(widget.destination)).abs() * widget.carClass.price)).toString();
+                          return UserMoneyTripsCard(
+                            dateFrom: getDepartTime(mTripList[index].dateFrom, mTripList[index].source),
+                            dateTo: getArrivalTime(getDepartTime(mTripList[index].dateFrom, mTripList[index].source)),
+                            price:price,
+                            destination: destination,
+                            source: source,
+                            stops: mTripList[index].keyWords['trainType'] == 'Express'?'Stops : ${(int.parse(widget.source) - int.parse(widget.destination)).abs().toString()}':'',
+                            onTap: () async {
+                              TicketModel newTicket = TicketModel(
+                                  date: widget.date,
+                                  source: Provider.of<SearchManage>(context,
+                                          listen: false)
+                                      .source,
+                                  destination: Provider.of<SearchManage>(context,
+                                          listen: false)
+                                      .destination,
+                                  carClass: widget.carClass.id,
+                                  userName: Wrapper.UNAME,
+                                  trainId:mTripList[index].trainId ,
+                                  tripId: mTripList[index].id.toString(),
+                                  userId: Wrapper.UID,
+                                  price: int.parse(price),
+                                  arriveAt: timeFormat.format(
+                                      dateFormat.parse(getArrivalTime(getDepartTime(mTripList[index].dateFrom, mTripList[index].source)))),
+                                  departAt: timeFormat.format(dateFormat
+                                      .parse(getDepartTime(mTripList[index].dateFrom, mTripList[index].source))));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => ChangeNotifierProvider(
+                                          create: (context) => PickSeatManage(
+                                              ticket: newTicket,
+                                              currentTrain: mTrainList.firstWhere(
+                                                  (element) =>
+                                                      element.id ==
+                                                      mTripList[index].trainId),
+                                              carList: mCarList,
+                                              currentCarClass: widget.carClass.id,
+                                              tripId: mTripList[index].id),
+                                          child: PickSeatScreen())));
+                            },
+                          );
+                        },
+                        itemCount: mTripList.length,
+                      ),
                     ): Text('No Trips found',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),),
                   ],
                 ),

@@ -270,7 +270,7 @@ class _TicketDetailsState extends State<TicketDetails> {
                         }
 
                       },
-                      child: Text('Print Ticket',style: TextStyle(fontSize: 25,fontWeight: FontWeight.w600,letterSpacing: 1.2),),
+                      child: Text('Download Ticket',style: TextStyle(fontSize: 25,fontWeight: FontWeight.w600,letterSpacing: 1.2),),
                     ),
                   ),
                 )

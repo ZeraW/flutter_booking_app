@@ -301,13 +301,13 @@ class TripResCard extends StatelessWidget {
       child: ListTile(
         onTap:onTap,
         title: Padding(
-          padding:  EdgeInsets.only(top: 10),
+          padding: source !=null? EdgeInsets.only(top: 10):EdgeInsets.all(0),
           child: Text(
             "Trip : $tripNum",
             style: TextStyle(fontSize: Dimensions.getWidth(4), fontWeight: FontWeight.bold),
           ),
         ),
-        subtitle: Column(
+        subtitle: source ==null||destination ==null?null:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 10,),

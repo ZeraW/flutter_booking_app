@@ -6,6 +6,7 @@ import 'package:flutter_booking_app/ui_screens/admin_widgets/m_booking.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_cars.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_citys.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_class.dart';
+import 'package:flutter_booking_app/ui_screens/admin_widgets/m_reports.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_trains.dart';
 import 'package:flutter_booking_app/ui_screens/admin_widgets/m_trips.dart';
 import 'package:flutter_booking_app/ui_widget/home_widgets/admin_widgets/admin_card.dart';
@@ -24,7 +25,7 @@ class _AdminScreenState extends State<AdminScreen> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Dimensions.getWidth(2)),
-      child: Column(
+      child: ListView(
         children: [
           SizedBox(height: Dimensions.getHeight(1)),
           AdminCard(
@@ -32,7 +33,6 @@ class _AdminScreenState extends State<AdminScreen> {
               open: StreamProvider<List<TrainModel>>.value(
                   value: DatabaseService().getLiveTrains,
                   child: ManageTrainsScreen())),
-
           AdminCard(
               title: 'Manage Class',
               open: StreamProvider<List<ClassModel>>.value(
@@ -61,14 +61,21 @@ class _AdminScreenState extends State<AdminScreen> {
                 StreamProvider<List<TripModel>>.value(
                     value: DatabaseService().getLiveTrips),
               ], child: ManageTripsScreen())),
-          AdminCard(title: 'Manage Reservation', open: MultiProvider(providers: [
-            StreamProvider<List<CityModel>>.value(
-                value: DatabaseService().getLiveCities),
-            StreamProvider<List<TrainModel>>.value(
-                value: DatabaseService().getLiveTrains),
-            StreamProvider<List<TripModel>>.value(
-                value: DatabaseService().getLiveTrips),
-          ], child: ManageBookingsScreen()))
+          AdminCard(
+              title: 'Manage Reservation',
+              open: MultiProvider(providers: [
+                StreamProvider<List<CityModel>>.value(
+                    value: DatabaseService().getLiveCities),
+                StreamProvider<List<TrainModel>>.value(
+                    value: DatabaseService().getLiveTrains),
+                StreamProvider<List<TripModel>>.value(
+                    value: DatabaseService().getLiveTrips),
+              ], child: ManageBookingsScreen())),
+          AdminCard(
+              title: 'Booking Report',
+              open: StreamProvider<List<StatsModel>>.value(
+                  value: DatabaseService().getLiveReports,
+                  child: ManageReportScreen())),
         ],
       ),
     );

@@ -1,8 +1,9 @@
 import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_booking_app/models/db_model.dart';
@@ -11,7 +12,6 @@ import 'package:flutter_booking_app/wrapper.dart';
 import 'package:provider/provider.dart';
 
 import '../models/db_model.dart';
-import '../ui_widget/home_widgets/admin_widgets/admin_card.dart';
 
 class DatabaseService {
   // Users collection reference
@@ -301,6 +301,29 @@ class DatabaseService {
         .map(SeatModel().fromQuery);
   }
 
+
+
+  // stream for user Tickets
+  Stream<List<TicketModel>> get getMyTickets {
+    return ticketCollection
+        .where('userId', isEqualTo: FirebaseAuth.instance.currentUser.uid)
+        .snapshots()
+        .map(TicketModel().fromQuery);
+  }
+
+  // stream for user Tickets
+  Stream<List<TicketModel>> ticketsByDay(String date) {
+    return ticketCollection
+        .where('date', isEqualTo: date)
+        .snapshots()
+        .map(TicketModel().fromQuery);
+  }
+
+  /////////////////////////////////// Tickets ///////////////////////////////////
+
+
+  /// //////////////////////////////// Report ///////////////////////////////////
+
   Future updateTicketStats(TicketModel ticket) async {
     DateTime dateTime = DateFormat("yyyy-MM-dd").parse(ticket.date);
     String currentMonth = ('${dateTime.year}-${dateTime.month}');
@@ -325,30 +348,17 @@ class DatabaseService {
         return ref.set(newStats.toJson());
       }
     });
-
-/*    return await statsCollection.doc(ticket.tripId).update({
-      'month.price$currentMonth': FieldValue.increment(ticket.price),
-      'month.count$currentMonth': FieldValue.increment(1)
-    });*/
   }
-
-  // stream for user Tickets
-  Stream<List<TicketModel>> get getMyTickets {
-    return ticketCollection
-        .where('userId', isEqualTo: FirebaseAuth.instance.currentUser.uid)
+  // stream for reports
+  Stream<List<StatsModel>> get getLiveReports {
+    return statsCollection
         .snapshots()
-        .map(TicketModel().fromQuery);
+        .map(StatsModel().fromQuery);
   }
 
-  // stream for user Tickets
-  Stream<List<TicketModel>> ticketsByDay(String date) {
-    return ticketCollection
-        .where('date', isEqualTo: date)
-        .snapshots()
-        .map(TicketModel().fromQuery);
-  }
 
-  /////////////////////////////////// Tickets ///////////////////////////////////
+
+  /// //////////////////////////////// Report ///////////////////////////////////
 
   ///////////////////////////////// utils ///////////////////////////////////
   Future batch({UserModel user}) async {
