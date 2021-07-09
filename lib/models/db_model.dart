@@ -52,7 +52,6 @@ class UserModel {
     };
   }
 }
-
 class CarModel {
   String id;
   final String carClass;
@@ -84,7 +83,6 @@ class CarModel {
     return data;
   }
 }
-
 class ClassModel {
   String id;
   final String className;
@@ -119,7 +117,6 @@ class ClassModel {
     return data;
   }
 }
-
 class TrainModel {
   String id;
   final String trainType;
@@ -158,7 +155,6 @@ class TrainModel {
     return data;
   }
 }
-
 class CityModel {
   final int id;
   final String name;
@@ -185,7 +181,6 @@ class CityModel {
     return data;
   }
 }
-
 class TripModel {
   String id;
   final String dateFrom, dateTo, numberOfStops, trainId;
@@ -252,7 +247,6 @@ class TripModel {
     return data;
   }
 }
-
 class SeatModel {
   String id;
   final String one, two, three;
@@ -292,7 +286,6 @@ class SeatModel {
     return data;
   }
 }
-
 class TicketModel {
   String id;
   String date,
@@ -390,7 +383,6 @@ class TicketModel {
     return data;
   }
 }
-
 class StatsModel {
   final String id;
   Map<String, int> tickets;
@@ -416,4 +408,3 @@ class StatsModel {
     return data;
   }
 }
-
