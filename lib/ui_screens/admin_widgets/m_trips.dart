@@ -124,7 +124,6 @@ class AddEditTripScreen extends StatefulWidget {
   @override
   _AddEditTripScreenState createState() => _AddEditTripScreenState();
 }
-
 class _AddEditTripScreenState extends State<AddEditTripScreen> {
   TextEditingController _priceOfClassAController = new TextEditingController();
   TextEditingController _tripNumberController = new TextEditingController();

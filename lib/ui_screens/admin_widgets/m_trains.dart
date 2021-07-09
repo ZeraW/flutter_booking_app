@@ -80,7 +80,6 @@ class AddEditTrainScreen extends StatefulWidget {
   @override
   _AddEditTrainScreenState createState() => _AddEditTrainScreenState();
 }
-
 class _AddEditTrainScreenState extends State<AddEditTrainScreen> {
   TextEditingController _trainIdController = new TextEditingController();
 
@@ -238,7 +237,6 @@ class ContinueAddTrain extends StatefulWidget {
   @override
   _ContinueAddTrainState createState() => _ContinueAddTrainState();
 }
-
 class _ContinueAddTrainState extends State<ContinueAddTrain> {
   Map<String, int> newCarCount = {};
   Map<String,String> keyWords={};
