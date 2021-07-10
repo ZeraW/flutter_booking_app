@@ -25,8 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _phoneError = "";
   String _nameError = "";
   String _emailError = "";
-  String _nationalIdError = "",_pwError="";
-
+  String _nationalIdError = "", _pwError = "";
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +38,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _emailController.text = user.mail;
       _nationalIdController.text = user.nationalId;
       _passwordController.text = user.password;
-
     }
 
     return user != null
@@ -123,7 +121,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   width: Dimensions.getWidth(65),
                   child: ElevatedButton(
                     onPressed: () async {
-                      isEnabled ==true ? _editProfile():isEnabled = true;
+                      if (isEnabled == true) {
+                        _editProfile();
+                        setState(() {
+                          isEnabled = false;
+                        });
+                      } else {
+                        isEnabled = true;
+                      }
                       setState(() {});
                     },
                     style: ButtonStyle(
@@ -131,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         shape: Uti.materialShape(RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0)))),
                     child: Text(
-                      !isEnabled?"Edit":'Save Changes',
+                      !isEnabled ? "Edit" : 'Save Changes',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: Dimensions.getWidth(4.0),
@@ -139,7 +144,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
-
                 Container(
                   margin: EdgeInsets.only(top: Dimensions.getHeight(2)),
                   height: Dimensions.getHeight(7.0),
@@ -161,7 +165,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
-
               ],
             ),
           )
@@ -172,37 +175,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     print('here');
     String firstName = _nameController.text;
     String mail = _emailController.text;
-    String nationalId = _nationalIdController.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
-    String phone = _phoneController.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+    String nationalId =
+        _nationalIdController.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+    String phone =
+        _phoneController.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
     String password = _passwordController.text;
 
     if (firstName == null || firstName.isEmpty) {
       _nameError = "Please enter first name";
-      setState(() {
-      });
-    }else if (mail == null || mail.isEmpty) {
+      setState(() {});
+    } else if (mail == null || mail.isEmpty) {
       clear();
       _emailError = "Please enter email Address";
-      setState(() {
-
-      });
-    }else if(!isEmail(mail)){
+      setState(() {});
+    } else if (!isEmail(mail)) {
       clear();
       _emailError = "Please enter Correct email Address";
-      setState(() {
-
-      });
-    }  else if (phone == null || phone.isEmpty) {
+      setState(() {});
+    } else if (phone == null || phone.isEmpty) {
       clear();
       _phoneError = "Please enter a valid phone number";
-    }else if (nationalId == null || nationalId.isEmpty) {
+    } else if (nationalId == null || nationalId.isEmpty) {
       clear();
       _nationalIdError = "Please enter National ID";
-    }else if (password == null || password.isEmpty || password.length<5) {
+    } else if (password == null || password.isEmpty || password.length < 5) {
       clear();
       _pwError = "Please enter Valid Password";
-      setState(() {
-      });
+      setState(() {});
     } else {
       print('there');
       clear();
@@ -217,27 +216,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
           logo: user.logo,
           type: user.type);
 
-      AuthService().changePassword(password==user.password?null:password,()async{
+      AuthService().changePassword(password == user.password ? null : password,
+          () async {
         await DatabaseService().updateUserData(user: newUser);
       });
-
     }
   }
 
   bool isEmail(String em) {
-
-    String p = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    String p =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
 
     RegExp regExp = new RegExp(p);
 
     return regExp.hasMatch(em);
   }
+
   void clear() {
     setState(() {
       _phoneError = "";
       _nameError = "";
       _pwError = "";
-
     });
   }
 }

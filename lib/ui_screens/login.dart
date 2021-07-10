@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: Dimensions.getHeight(4.0),
               ),
-              GestureDetector(
+              widget.type!='admin'?GestureDetector(
                 onTap: () {
                   Provider.of<AuthManage>(context, listen: false)
                       .toggleWidgets(currentPage: 2, type: widget.type);
@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: Dimensions.getWidth(4.0)),
                   ),
                 ),
-              ),
+              ):SizedBox(),
 
             ],
           ),
