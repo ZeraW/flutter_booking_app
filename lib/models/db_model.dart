@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -383,28 +384,65 @@ class TicketModel {
     return data;
   }
 }
-class StatsModel {
+
+
+class NewStatsModel {
   final String id;
-  Map<String, int> tickets;
+  Map<String, int> totalCount; //total - 1st - 2nd
+  Map<String, int> totalProfit; // total - 1st - 2nd
 
-  StatsModel({this.id, this.tickets});
+  Map<String, int> topCountFirst; //<'id trip', count>
+  Map<String, int> topProfitFirst; //<'id trip', price>
 
-  List<StatsModel> fromQuery(QuerySnapshot snapshot) {
+  Map<String, int> topCountSecond; //<'id trip', count>
+  Map<String, int> topProfitSecond; //<'id trip', price>
+
+  NewStatsModel({this.id, this.totalCount,this.totalProfit,this.topCountFirst,this.topProfitFirst,this.topCountSecond,this.topProfitSecond,});
+
+  List<NewStatsModel> fromQuery(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
-      return StatsModel(
+      return NewStatsModel(
         id: doc.data()['id'] ?? '',
-        tickets: doc.data()['tickets'] != null
-            ? Map<String, int>.from(doc.data()['tickets'])
+        totalCount: doc.data()['totalCount'] != null
+            ? sortMap(Map<String, int>.from(doc.data()['totalCount']))
             : {},
+        totalProfit: doc.data()['totalProfit'] != null
+            ? sortMap(Map<String, int>.from(doc.data()['totalProfit']))
+            : {},
+        topCountFirst: doc.data()['topCountFirst'] != null
+            ? sortMap(Map<String, int>.from(doc.data()['topCountFirst']))
+            : {},
+        topProfitFirst: doc.data()['topProfitFirst'] != null
+            ? sortMap(Map<String, int>.from(doc.data()['topProfitFirst']))
+            : {},
+        topCountSecond: doc.data()['topCountSecond'] != null
+            ? sortMap(Map<String, int>.from(doc.data()['topCountSecond']))
+            : {},
+        topProfitSecond: doc.data()['topProfitSecond'] != null
+            ? sortMap(Map<String, int>.from(doc.data()['topProfitSecond']))
+            : {},
+
       );
     }).toList();
   }
 
 
+  Map<String, int> sortMap(Map<String, int> map){
+    var sortedKeys = map.keys.toList(growable:false)..sort((k2, k1) => map[k1].compareTo(map[k2]));
+    LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys, key: (k) => k, value: (k) => map[k]);
+
+    return sortedMap.cast();
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['tickets'] = this.tickets;
+    data['totalCount'] = this.totalCount;
+    data['totalProfit'] = this.totalProfit;
+    data['topCountFirst'] = this.topCountFirst;
+    data['topProfitFirst'] = this.topProfitFirst;
+    data['topCountSecond'] = this.topCountSecond;
+    data['topProfitSecond'] = this.topProfitSecond;
     return data;
   }
 }

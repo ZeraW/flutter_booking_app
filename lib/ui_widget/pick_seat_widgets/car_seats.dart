@@ -27,7 +27,7 @@ class CarSeats extends StatelessWidget {
           child: mList != null
               ? ListView.builder(
                   // get car count and divided it on 5 (cuz ever row has 5 seat)  .round to cast it back to int value
-                  itemCount: (pickSeat.carList.firstWhere((element) => element.carClass == pickSeat.ticket.carClass).seats / 5).round(),
+                  itemCount: (pickSeat.carList.firstWhere((element) => element.carClass == pickSeat.ticket.carClass).seats / 4).round(),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
                   itemBuilder: (BuildContext context, int index) {
                     SeatModel currentRow = mList.firstWhere(
@@ -35,7 +35,7 @@ class CarSeats extends StatelessWidget {
                         orElse: () => null);
                     return Padding(
                       padding: EdgeInsets.only(
-                          bottom: index == 4 || index == 9 ? 20 : 0),
+                          bottom: index == 3 || index == 7 ? 20 : 0),
                       child: Row(
                         children: [
                           Chair(
@@ -54,6 +54,7 @@ class CarSeats extends StatelessWidget {
                               isBooked: currentRow != null &&
                                   currentRow.two != null &&
                                   currentRow.two.isNotEmpty),
+                          Spacer(),
                           Chair(
                               rowId: 'R${index + 1}',
                               chairId: 'three',
@@ -64,7 +65,6 @@ class CarSeats extends StatelessWidget {
                               isBooked: currentRow != null &&
                                   currentRow.three != null &&
                                   currentRow.three.isNotEmpty),
-                          Spacer(),
                           Chair(
                               rowId: 'R${index + 1}',
                               chairId: 'four',
@@ -75,7 +75,7 @@ class CarSeats extends StatelessWidget {
                               isBooked: currentRow != null &&
                                   currentRow.four != null &&
                                   currentRow.four.isNotEmpty),
-                          Chair(
+                          /*Chair(
                               rowId: 'R${index + 1}',
                               chairId: 'five',
                               isMe: currentRow != null &&
@@ -84,7 +84,7 @@ class CarSeats extends StatelessWidget {
                               picked: pickSeat.currentSeat,
                               isBooked: currentRow != null &&
                                   currentRow.five != null &&
-                                  currentRow.five.isNotEmpty),
+                                  currentRow.five.isNotEmpty),*/
                         ],
                       ),
                     );

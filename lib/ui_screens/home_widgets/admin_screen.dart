@@ -73,7 +73,7 @@ class _AdminScreenState extends State<AdminScreen> {
               ], child: ManageBookingsScreen())),
           AdminCard(
               title: 'Booking Report',
-              open: StreamProvider<List<StatsModel>>.value(
+              open: StreamProvider<List<NewStatsModel>>.value(
                   value: DatabaseService().getLiveReports,
                   child: ManageReportScreen())),
         ],

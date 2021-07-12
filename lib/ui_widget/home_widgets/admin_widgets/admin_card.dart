@@ -345,4 +345,31 @@ class TripResCard extends StatelessWidget {
   }
 }
 
+class TripRepCard extends StatelessWidget {
+  String title;
+  IconData icon;
+  Function onTap;
+
+
+  TripRepCard({this.title, this.icon,this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        onTap:onTap,
+        title: Text(
+          "$title",
+          style: TextStyle(fontSize: Dimensions.getWidth(4), fontWeight: FontWeight.bold),
+        ),
+        leading: Icon(
+          icon,
+          size: Dimensions.getWidth(8),
+        ),
+        shape: Border.all(color: Colors.redAccent, width: 5),
+      ),
+    );
+  }
+}
+
 

@@ -214,7 +214,7 @@ class _TicketDetailsState extends State<TicketDetails> {
                                       ),
                                       Spacer(),
                                       Text(
-                                        '${widget.ticket.car.substring(widget.ticket.car.length - 2)}/${widget.ticket.row}/${widget.ticket.seat}',
+                                        'car : ${widget.ticket.car.substring(widget.ticket.car.length - 2)} / chair : ${getSeatNumber(widget.ticket.row.substring(1) , widget.ticket.seat)}',
                                         style: TextStyle(color: Colors.redAccent),
                                       ),
                                     ],
@@ -226,7 +226,7 @@ class _TicketDetailsState extends State<TicketDetails> {
                                     decoration: BoxDecoration(
                                         color: Uti().pinkColor,
                                         borderRadius: BorderRadius.circular(11)),
-                                    padding: EdgeInsets.all(20),
+                                    padding: EdgeInsets.symmetric(vertical: 20,horizontal: 10),
                                     child: Column(
                                       children: [
                                         Text('Booking ID : ${widget.ticket.id}'),
@@ -280,7 +280,6 @@ class _TicketDetailsState extends State<TicketDetails> {
     );
   }
 
-
   Future<String> createFolder(String cow) async {
     final folderName = cow;
     final path = Directory("storage/emulated/0/$folderName");
@@ -294,5 +293,21 @@ class _TicketDetailsState extends State<TicketDetails> {
       path.create();
       return path.path;
     }
+  }
+
+  int getSeatNumber(String row , String seat){
+    int mRow = int.parse(row);
+    if(seat=='one'){
+      return mRow*1;
+    }else if(seat=='two'){
+      return mRow*2;
+    }else if(seat=='three'){
+      return mRow*3;
+    }else if(seat=='four'){
+      return mRow*4;
+    }else if(seat=='five'){
+      return mRow*5;
+    }
+
   }
 }

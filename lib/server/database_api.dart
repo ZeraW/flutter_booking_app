@@ -255,7 +255,7 @@ class DatabaseService {
     var docRef = ticketCollection.doc();
     ticket.id = docRef.id;
     docRef.set(ticket.toJson()).then((value) async {
-      await updateTicketStats(ticket);
+      await updateBookingStats(ticket);
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -282,7 +282,7 @@ class DatabaseService {
         .doc(ticket.row)
         .update({
       '${ticket.seat}': null,
-    }).then((value) async{
+    }).then((value) async {
       await ticketCollection.doc(ticket.id).delete();
     });
   }
@@ -300,8 +300,6 @@ class DatabaseService {
         .snapshots()
         .map(SeatModel().fromQuery);
   }
-
-
 
   // stream for user Tickets
   Stream<List<TicketModel>> get getMyTickets {
@@ -321,42 +319,75 @@ class DatabaseService {
 
   /////////////////////////////////// Tickets ///////////////////////////////////
 
-
   /// //////////////////////////////// Report ///////////////////////////////////
 
-  Future updateTicketStats(TicketModel ticket) async {
-    DateTime dateTime = DateFormat("yyyy-MM-dd").parse(ticket.date);
-    String currentMonth = ('${dateTime.year}-${dateTime.month}');
-    print(currentMonth.toString());
 
-    var ref = statsCollection.doc(ticket.tripId);
+  Future updateBookingStats(TicketModel ticket) async {
+    DateTime dateTime = DateFormat("yyyy-MM-dd").parse(ticket.date);
+
+    String year = '${dateTime.year}';
+    int month = dateTime.month;
+
+    var ref = statsCollection.doc(year);
     ref.get().then((value) {
       if (value.exists) {
-        return ref.update({
-          'tickets.price$currentMonth': FieldValue.increment(ticket.price),
-          'tickets.count$currentMonth': FieldValue.increment(1),
-          'tickets.priceTotal': FieldValue.increment(ticket.price),
-          'tickets.countTotal': FieldValue.increment(1)
-        });
+        if (month <= 6) {
+          return ref.update({
+            'totalProfit.price': FieldValue.increment(ticket.price),
+            'totalProfit.1st': FieldValue.increment(ticket.price),
+            'totalProfit.$month': FieldValue.increment(ticket.price),
+
+            'totalCount.1st': FieldValue.increment(1),
+            'totalCount.count': FieldValue.increment(1),
+            'totalCount.$month': FieldValue.increment(1),
+
+
+            'topProfitFirst.${ticket.tripId}': FieldValue.increment(ticket.price),
+            'topCountFirst.${ticket.tripId}': FieldValue.increment(1)
+          });
+        } else {
+          return ref.update({
+            'totalProfit.price': FieldValue.increment(ticket.price),
+            'totalProfit.$month': FieldValue.increment(ticket.price),
+            'totalProfit.2nd': FieldValue.increment(ticket.price),
+
+            'totalCount.count': FieldValue.increment(1),
+            'totalCount.2nd': FieldValue.increment(1),
+            'totalCount.$month': FieldValue.increment(1),
+
+            'topProfitSecond.${ticket.tripId}':
+                FieldValue.increment(ticket.price),
+            'topCountSecond.${ticket.tripId}': FieldValue.increment(1)
+          });
+        }
       } else {
-        StatsModel newStats = StatsModel(id: ticket.tripId, tickets: {
-          'price$currentMonth': ticket.price,
-          'count$currentMonth': 1,
-          'priceTotal': ticket.price,
-          'countTotal': 1,
-        });
-        return ref.set(newStats.toJson());
+        if (month <= 6) {
+          NewStatsModel newReport = NewStatsModel(
+              id: year,
+              totalProfit: {'price': ticket.price, '1st': ticket.price,'$month': ticket.price,},
+              totalCount: {'1st': 1, 'count': 1,'$month': 1,},
+              topProfitFirst: {'${ticket.tripId}': ticket.price},
+              topCountFirst: {'${ticket.tripId}': 1},
+              topProfitSecond: {},topCountSecond: {});
+          return ref.set(newReport.toJson());
+        } else {
+          NewStatsModel newReport = NewStatsModel(
+              id: year,
+              totalProfit: {'price': ticket.price, '2nd': ticket.price,'$month': ticket.price,},
+              totalCount: {'count': 1,'2nd': 1,'$month': 1,},
+              topProfitSecond: {'${ticket.tripId}': ticket.price},
+              topCountSecond: {'${ticket.tripId}': 1},
+              topCountFirst: {},topProfitFirst: {});
+          return ref.set(newReport.toJson());
+        }
       }
     });
   }
+
   // stream for reports
-  Stream<List<StatsModel>> get getLiveReports {
-    return statsCollection
-        .snapshots()
-        .map(StatsModel().fromQuery);
+  Stream<List<NewStatsModel>> get getLiveReports {
+    return statsCollection.snapshots().map(NewStatsModel().fromQuery);
   }
-
-
 
   /// //////////////////////////////// Report ///////////////////////////////////
 

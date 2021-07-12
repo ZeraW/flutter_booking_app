@@ -130,7 +130,8 @@ class _ResultScreenState extends State<ResultScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    mTripList != null && mTripList.isNotEmpty?  Expanded(
+                    mTripList != null && mTripList.isNotEmpty?
+                    Expanded(
                       child: ListView.builder(
                         padding: EdgeInsets.symmetric(
                             horizontal: Dimensions.getWidth(5),
