@@ -142,9 +142,11 @@ class _ResultScreenState extends State<ResultScreen> {
                           String destination = mCityList.firstWhere((element) => element.id == int.parse(widget.destination)).name;
                           String price = (mTripList[index].prices.abs()+((int.parse(widget.source) - int.parse(widget.destination)).abs() * widget.carClass.price)).toString();
                           return UserMoneyTripsCard(
-                            dateFrom: getDepartTime(mTripList[index].dateFrom, mTripList[index].source),
+                            stopCount: (mTripList[index].source-mTripList[index].destination).abs(),
+                            dateFrom: mTripList[index].dateFrom/*getDepartTime(mTripList[index].dateFrom, mTripList[index].source)*/,
                             dateTo: getArrivalTime(getDepartTime(mTripList[index].dateFrom, mTripList[index].source)),
                             price:price,
+                            timeExtra: mTripList[index].keyWords['trainType'] == 'Express'? 45 :30,
                             destination: destination,
                             source: source,
                             stops: mTripList[index].keyWords['trainType'] == 'Express'?'Stops : ${(int.parse(widget.source) - int.parse(widget.destination)).abs().toString()}':'',
@@ -163,8 +165,7 @@ class _ResultScreenState extends State<ResultScreen> {
                                   tripId: mTripList[index].id.toString(),
                                   userId: Wrapper.UID,
                                   price: int.parse(price),
-                                  arriveAt: timeFormat.format(
-                                      dateFormat.parse(getArrivalTime(getDepartTime(mTripList[index].dateFrom, mTripList[index].source)))),
+                                  arriveAt: getArrivalTime(mTripList[index].dateFrom/*getDepartTime(mTripList[index].dateFrom, mTripList[index].source)*/),
                                   departAt: timeFormat.format(dateFormat
                                       .parse(getDepartTime(mTripList[index].dateFrom, mTripList[index].source))));
                               Navigator.push(

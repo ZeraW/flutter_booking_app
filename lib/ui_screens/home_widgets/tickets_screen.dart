@@ -14,6 +14,8 @@ class MyTicketScreen extends StatelessWidget {
     return MultiProvider(providers: [
       StreamProvider<List<CityModel>>.value(
           value: DatabaseService().getLiveCities),
+      StreamProvider<List<TripModel>>.value(
+          value: DatabaseService().getLiveTrips),
       StreamProvider<List<TicketModel>>.value(
           value: DatabaseService().getMyTickets),
     ], child: TicketsWidget());
@@ -29,11 +31,13 @@ class _TicketsWidgetState extends State<TicketsWidget> {
   @override
   Widget build(BuildContext context) {
     List<CityModel> mCityList = Provider.of<List<CityModel>>(context);
-    List<TicketModel> mTripList = Provider.of<List<TicketModel>>(context);
+    List<TicketModel> mTicketList = Provider.of<List<TicketModel>>(context);
+    List<TripModel> mTripList = Provider.of<List<TripModel>>(context);
+
     return Container(
       height: double.infinity,
-      child: mTripList != null
-          ? mTripList.length > 0
+      child: mTicketList != null && mTripList!=null
+          ? mTicketList.length > 0
           ? ListView.builder(
         padding: EdgeInsets.symmetric(
             horizontal: Dimensions.getWidth(5),
@@ -42,23 +46,28 @@ class _TicketsWidgetState extends State<TicketsWidget> {
         itemBuilder: (ctx, index) {
           String source = mCityList
               .firstWhere((element) =>
-          element.id.toString() == mTripList[index].source)
+          element.id.toString() == mTicketList[index].source)
               .name;
           String destination = mCityList
               .firstWhere((element) =>
-          element.id.toString() == mTripList[index].destination)
+          element.id.toString() == mTicketList[index].destination)
               .name;
+
+          TripModel trip = mTripList.firstWhere((element) => element.id == mTicketList[index].tripId,orElse: ()=>null);
           return UserMoneyTripsCard(
-              dateFrom: mTripList[index].departAt.toString(),
-            dateTo: mTripList[index].arriveAt.toString(),
+            stopCount: (int.parse(mTicketList[index].source)-int.parse(mTicketList[index].destination)).abs(),
+              dateFrom: mTicketList[index].departAt.toString(),
+            dateTo: mTicketList[index].arriveAt.toString(),
             destination: destination,
             source: source,
+            timeExtra: trip!=null ? trip.keyWords['trainType'] == 'Express'? 45 :30 : 35,
+
             type: '',
             onCancel: ()async{
-              await DatabaseService().deleteSeat(ticket: mTripList[index]);
+              await DatabaseService().deleteSeat(ticket: mTicketList[index]);
             },
 
-            stops: 'Date : ${mTripList[index].date}',
+            stops: 'Date : ${mTicketList[index].date}',
             onTap: () async {
               Navigator.push(
                   context,
@@ -70,11 +79,11 @@ class _TicketsWidgetState extends State<TicketsWidget> {
                             value: DatabaseService().getLiveClass),
                         StreamProvider<List<TrainModel>>.value(
                             value: DatabaseService().getLiveTrains),
-                      ], child: TicketDetails(mTripList[index]))));
+                      ], child: TicketDetails(mTicketList[index]))));
             },
           );
         },
-        itemCount: mTripList.length,
+        itemCount: mTicketList.length,
       )
           : Center(
         child: Text(

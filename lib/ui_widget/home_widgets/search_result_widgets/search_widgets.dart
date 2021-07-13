@@ -124,21 +124,41 @@ class UserMoneyTripsCard extends StatelessWidget {
   final String dateFrom, dateTo;
   final String source;
   final String destination;
-  final String price,stops,type;
-
+  final String price, stops, type;
+  final int stopCount,timeExtra;
   final Function onTap;
   final Function onCancel;
 
   UserMoneyTripsCard(
-      {this.dateFrom, this.dateTo, this.source,this.price,this.type,this.stops, this.destination, this.onTap,this.onCancel});
+      {this.dateFrom,
+      this.dateTo,
+      this.source,this.stopCount,
+      this.price,
+      this.type,this.timeExtra,
+      this.stops,
+      this.destination,
+      this.onTap,
+      this.onCancel});
 
   @override
   Widget build(BuildContext context) {
     DateFormat dateFormat = DateFormat("HH:mm");
     DateFormat timeFormat = DateFormat("HH:mm");
 
-    String depart = timeFormat.format(dateFormat.parse(dateFrom));
-    String arrive = timeFormat.format(dateFormat.parse(dateTo));
+
+    DateTime myDateFrom = new DateFormat("HH:mm").parse(dateFrom);
+    DateTime myDateTo = myDateFrom.add(Duration(minutes: stopCount* timeExtra));
+
+    String depart = DateFormat("HH:mm").format(myDateFrom);
+    String arrive = DateFormat("HH:mm").format(myDateTo);
+
+    String _printDuration(Duration duration) {
+      String twoDigits(int n) => n.toString().padLeft(2, "0");
+      String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+      String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+      return "${twoDigits(duration.inHours)}h:${twoDigitMinutes}m";
+    }
+
 
     return Column(
       children: [
@@ -153,7 +173,9 @@ class UserMoneyTripsCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                     color: Uti().pinkColor.withOpacity(0.99),
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10),bottomRight: Radius.circular(10)),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey,
@@ -161,17 +183,34 @@ class UserMoneyTripsCard extends StatelessWidget {
                     ]),
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding:  EdgeInsets.only(top: 5),
+                  padding: EdgeInsets.only(top: 5),
                   child: Row(
                     children: [
-                      Text('$stops',style: TextStyle(fontWeight: FontWeight.w600),),
+                      Text(
+                        '$stops',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
                       Spacer(),
-                      Text(price!=null ?'Price : ${price}':'${type}',style: TextStyle(fontWeight: FontWeight.w600),),
-                      price==null&& type.isEmpty ?Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: RaisedButton(onPressed: onCancel,child: Text('Cancel',style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),),color: Colors.redAccent,disabledColor: Colors.redAccent,),
-                      ):SizedBox()
-
+                      Text(
+                        price != null ? 'Price : ${price}' : '${type}',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      price == null && type.isEmpty
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: RaisedButton(
+                                onPressed: onCancel,
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white),
+                                ),
+                                color: Colors.redAccent,
+                                disabledColor: Colors.redAccent,
+                              ),
+                            )
+                          : SizedBox()
                     ],
                   ),
                 ),
@@ -179,10 +218,8 @@ class UserMoneyTripsCard extends StatelessWidget {
             ),
             GestureDetector(
               onTap: onTap,
-
               child: Container(
                 margin: EdgeInsets.only(bottom: Dimensions.getHeight(5)),
-
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -249,7 +286,7 @@ class UserMoneyTripsCard extends StatelessWidget {
                             ),
                             Spacer(),
                             Text(
-                                '___ ${durationToString(dateFormat.parse(dateTo).difference(dateFormat.parse(dateFrom)).inMinutes)} ___      '),
+                                '___ ${_printDuration(Duration(minutes: stopCount* timeExtra))} ___      '),
                             Spacer(),
                             Column(
                               children: [
@@ -268,16 +305,18 @@ class UserMoneyTripsCard extends StatelessWidget {
                 ),
               ),
             ),
-
           ],
         ),
-        SizedBox(height: Dimensions.getHeight(2),)
+        SizedBox(
+          height: Dimensions.getHeight(2),
+        )
       ],
     );
   }
 
   String durationToString(int minutes) {
-    var d = Duration(minutes: minutes);
+
+    var d = Duration(minutes: minutes/*.abs()*/);
     List<String> parts = d.toString().split(':');
     return '${parts[0].padLeft(2, '0')}h:${parts[1].padLeft(2, '0')}m';
   }
@@ -359,18 +398,26 @@ class RoundedContainer extends StatelessWidget {
   }
 }
 
-
 class ReservationCard extends StatelessWidget {
   final String dateFrom, dateTo;
   final String source;
   final String destination;
-  final String price,stops,type;
+  final String price, stops, type;
   final TicketModel ticket;
   final Function onTap;
   final Function onCancel;
 
   ReservationCard(
-      {this.dateFrom, this.dateTo, this.source,this.price,this.ticket,this.type,this.stops, this.destination, this.onTap,this.onCancel});
+      {this.dateFrom,
+      this.dateTo,
+      this.source,
+      this.price,
+      this.ticket,
+      this.type,
+      this.stops,
+      this.destination,
+      this.onTap,
+      this.onCancel});
 
   @override
   Widget build(BuildContext context) {
@@ -393,7 +440,9 @@ class ReservationCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                     color: Uti().pinkColor.withOpacity(0.99),
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10),bottomRight: Radius.circular(10)),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey,
@@ -401,16 +450,34 @@ class ReservationCard extends StatelessWidget {
                     ]),
                 alignment: Alignment.centerLeft,
                 child: Padding(
-                  padding:  EdgeInsets.only(top: 5),
+                  padding: EdgeInsets.only(top: 5),
                   child: Row(
                     children: [
-                      Text('$stops',style: TextStyle(fontWeight: FontWeight.w600),),
+                      Text(
+                        '$stops',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
                       Spacer(),
-                      Text(price!=null ?'Price : ${price}':'${type}',style: TextStyle(fontWeight: FontWeight.w600),),
-                      price==null&& type.isEmpty ?Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: RaisedButton(onPressed: onCancel,child: Text('Cancel',style: TextStyle(fontWeight: FontWeight.w600,color: Colors.white),),color: Colors.redAccent,disabledColor: Colors.redAccent,),
-                      ):SizedBox()
+                      Text(
+                        price != null ? 'Price : ${price}' : '${type}',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      price == null && type.isEmpty
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: RaisedButton(
+                                onPressed: onCancel,
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white),
+                                ),
+                                color: Colors.redAccent,
+                                disabledColor: Colors.redAccent,
+                              ),
+                            )
+                          : SizedBox()
                     ],
                   ),
                 ),
@@ -418,10 +485,8 @@ class ReservationCard extends StatelessWidget {
             ),
             GestureDetector(
               onTap: onTap,
-
               child: Container(
                 margin: EdgeInsets.only(bottom: Dimensions.getHeight(5)),
-
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -485,16 +550,16 @@ class ReservationCard extends StatelessWidget {
                           style: TextStyle(fontSize: Dimensions.getWidth(4)),
                         ),
                       ),
-
                     ],
                   ),
                 ),
               ),
             ),
-
           ],
         ),
-        SizedBox(height: Dimensions.getHeight(2),)
+        SizedBox(
+          height: Dimensions.getHeight(2),
+        )
       ],
     );
   }

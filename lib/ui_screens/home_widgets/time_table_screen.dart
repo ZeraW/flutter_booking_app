@@ -50,44 +50,17 @@ class _TimeTableState extends State<TimeTable> {
                     element.id == mTripList[index].destination)
                         .name;
                     return UserMoneyTripsCard(
+                      timeExtra: mTripList[index].keyWords['trainType'] == 'Express'? 45 :30,
+
                       dateFrom: mTripList[index].dateFrom.toString(),
                       dateTo: mTripList[index].dateTo.toString(),
                       destination: destination,
                       source: source,
                       type: mTripList[index].keyWords['trainType'] == 'Express'? 'Express': 'Super Fast',
+                      stopCount: (mTripList[index].source-mTripList[index].destination).abs(),
 
                       stops: mTripList[index].keyWords['trainType'] == 'Express'?'Stops : ${(mTripList[index].source - mTripList[index].destination).abs().toString()}':'',
                       onTap: () async {
-                        /*TicketModel newTicket = TicketModel(
-                                date: mTripList[index].dateFrom,
-                                source: Provider.of<SearchManage>(context,
-                                        listen: false)
-                                    .source,
-                                destination: Provider.of<SearchManage>(context,
-                                        listen: false)
-                                    .destination,
-                                carClass: widget.carClass.id,
-                                userName: Wrapper.UNAME,
-                                userId: Wrapper.UID,
-                                price: widget.carClass == 'A' ? 150 : 100,
-                                arriveAt: timeFormat.format(
-                                    dateFormat.parse(mTripList[index].dateTo)),
-                                departAt: timeFormat.format(dateFormat
-                                    .parse(mTripList[index].dateFrom)));
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => ChangeNotifierProvider(
-                                        create: (context) => PickSeatManage(
-                                            ticket: newTicket,
-                                            currentTrain: mTrainList.firstWhere(
-                                                (element) =>
-                                                    element.id ==
-                                                    mTripList[index].trainId),
-                                            carList: mCarList,
-                                            currentCarClass: widget.carClass.id,
-                                            tripId: mTripList[index].id),
-                                        child: PickSeatScreen())));*/
                       },
                     );
                   },
